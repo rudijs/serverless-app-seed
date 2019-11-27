@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
+import Container from "react-bootstrap/Container";
 
-import "./App.css";
-import Nav from "./components/layout/Nav";
+import NavBar from "./components/layout/Nav";
 import HomePage from "./components/HomePage";
 import DashboardPage from "./components/DashboardPage";
 import SignInPage from "./components/SignInPage";
@@ -14,18 +14,16 @@ const PrivateRoute = inject("state")(({ state, component: Component, ...rest }) 
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <Router>
-          <Nav />
-          <Switch>
-            <Route exact path="/" component={HomePage} />
-            <Route path="/signin" component={SignInPage} />
-            <PrivateRoute path="/dashboard" component={DashboardPage} />
-          </Switch>
-        </Router>
-      </header>
-    </div>
+    <Router>
+      <Container>
+        <NavBar />
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          <Route path="/signin" component={SignInPage} />
+          <PrivateRoute path="/dashboard" component={DashboardPage} />
+        </Switch>
+      </Container>
+    </Router>
   );
 }
 

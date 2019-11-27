@@ -3,32 +3,54 @@ import { withRouter } from "react-router-dom";
 import { inject, observer } from "mobx-react";
 import { Link } from "react-router-dom";
 
-const Nav = inject("state")(
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+
+const NavBar = inject("state")(
   observer(({ state, history }) => {
     console.log(state.isAuthenticated);
     return (
-      <div>
-        <span>Nav Bar: {state.group}</span> |&nbsp;
-        <Link to="/">Home</Link> |&nbsp;
-        {state.isAuthenticated ? (
-          <React.Fragment>
-            <Link to="/dashboard">Dashboard</Link>|&nbsp;
-            <button
-              onClick={() => {
-                state.setGroup("guest");
-                history.push("/");
-              }}
-            >
-              Sign Out
-            </button>
-            |&nbsp;
-          </React.Fragment>
-        ) : (
-          <Link to="/signin">Sign In</Link>
-        )}
-      </div>
+      <Navbar>
+        <Navbar.Brand as={Link} to="/">
+          App
+        </Navbar.Brand>
+        <Nav defaultActiveKey={1}>
+          <Nav.Item>
+            <Nav.Link as={Link} to="/" eventKey={1}>
+              Home
+            </Nav.Link>
+          </Nav.Item>
+          {state.isAuthenticated ? (
+            <>
+              <Nav.Item>
+                <Nav.Link as={Link} to="/dashboard" eventKey={2}>
+                  Dashboard
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link
+                  eventKey={3}
+                  onClick={() => {
+                    state.setGroup("guest");
+                    history.push("/");
+                  }}
+                >
+                  Sign Out
+                </Nav.Link>
+              </Nav.Item>
+            </>
+          ) : (
+            <Nav.Item>
+              <Nav.Link as={Link} to="/signin" eventKey={4}>
+                Sign In
+              </Nav.Link>
+            </Nav.Item>
+          )}
+        </Nav>
+      </Navbar>
+      // <span>Nav Bar: {state.group}</span> |&nbsp;
     );
   })
 );
 
-export default withRouter(Nav);
+export default withRouter(NavBar);
