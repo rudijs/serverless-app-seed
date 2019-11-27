@@ -5,10 +5,10 @@ import { Link } from "react-router-dom";
 
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
+import { Auth } from "aws-amplify";
 
 const NavBar = inject("state")(
   observer(({ state, history }) => {
-    console.log(state.isAuthenticated);
     return (
       <Navbar>
         <Navbar.Brand as={Link} to="/">
@@ -30,9 +30,15 @@ const NavBar = inject("state")(
               <Nav.Item>
                 <Nav.Link
                   eventKey={3}
-                  onClick={() => {
-                    state.setGroup("guest");
-                    history.push("/");
+                  onClick={async () => {
+                    try {
+                      await Auth.signOut();
+                    } catch (e) {
+                      console.log(e);
+                    } finally {
+                      state.setGroup("guest");
+                      history.push("/");
+                    }
                   }}
                 >
                   Sign Out
