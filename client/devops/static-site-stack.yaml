@@ -1,0 +1,101 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: "Create Static Site"
+
+Parameters:
+  DomainName:
+    Type: String
+    AllowedPattern: ".+"
+
+  SubDomain:
+    Type: String
+    AllowedPattern: ".+"
+
+  Environment:
+    Type: String
+    AllowedPattern: ".+"
+
+  AcmCertificateArn:
+    Type: String
+    AllowedPattern: ".+"
+
+Resources:
+  StaticSiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join ["", [!Ref Environment, "-", !Join [".", [!Ref SubDomain, !Ref DomainName]]]]
+      WebsiteConfiguration:
+        ErrorDocument: index.html
+        IndexDocument: index.html
+
+  StaticSiteBucketBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: "StaticSiteBucket"
+      PolicyDocument:
+        Statement:
+          - Action:
+              - "s3:ListBucket"
+            Effect: "Allow"
+            Resource:
+              - Fn::GetAtt: [StaticSiteBucket, Arn]
+            Principal: "*"
+          - Action:
+              - "s3:GetObject"
+            Effect: "Allow"
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt: [StaticSiteBucket, Arn]
+                  - "/*"
+            Principal: "*"
+
+  CloudfrontOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: SSVClientOriginAccessID
+
+  StaticSiteCDN:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Aliases:
+          - !Join ["-", [!Ref Environment, !Join [".", [!Ref SubDomain, !Ref DomainName]]]]
+        Origins:
+          - Id: SSVClientOriginID
+            DomainName: !GetAtt [StaticSiteBucket, RegionalDomainName]
+            S3OriginConfig:
+              OriginAccessIdentity:
+                Fn::Join:
+                  - "/"
+                  - - origin-access-identity
+                    - cloudfront
+                    - !Ref CloudfrontOriginAccessIdentity
+        DefaultCacheBehavior:
+          ForwardedValues:
+            QueryString: true
+          TargetOriginId: SSVClientOriginID
+          ViewerProtocolPolicy: redirect-to-https
+        DefaultRootObject: index.html
+        ViewerCertificate:
+          AcmCertificateArn: !Ref AcmCertificateArn
+          SslSupportMethod: sni-only
+
+  StaticSiteDomainName:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: !Join ["-", [!Ref Environment, !Join [".", [!Ref SubDomain, !Ref DomainName]]]]
+      Type: A
+      HostedZoneName: !Join ["", [!Ref DomainName, "."]]
+      AliasTarget:
+        DNSName: !GetAtt [StaticSiteCDN, DomainName]
+        HostedZoneId: Z2FDTNDATAQYW2
+
+Outputs:
+  StaticSiteBucketName:
+    Value:
+      Ref: StaticSiteBucket

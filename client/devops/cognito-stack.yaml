@@ -1,0 +1,228 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+  Serverless Stack Cognito User Pool and Identity Pool.
+
+  Usage examples
+
+  * Create dev environment
+  aws cloudformation create-stack --stack-name cognito-notes-app-dev --template-body file://cognito.yaml --capabilities CAPABILITY_NAMED_IAM
+
+  * Delete dev environment
+  aws cloudformation delete-stack --stack-name cognito-notes-app-dev
+
+  * Create prod environment
+  aws cloudformation create-stack \
+  --stack-name cognito-notes-app-prod \
+  --template-body file://cognito.yaml \
+  --capabilities CAPABILITY_NAMED_IAM \
+  --parameters \
+  ParameterKey=Environment,ParameterValue=production
+
+  * Delete prod environment
+  aws cloudformation delete-stack --stack-name cognito-notes-app-prod
+
+Parameters:
+  Environment:
+    Description: The environment to use.
+    Type: String
+    Default: dev
+    AllowedValues: ["dev", "staging", "production"]
+    ConstraintDescription: must be dev, staging or production.
+
+  CognitoUserPoolName:
+    Description: The name of the Cognito User Pool being created.
+    Type: String
+    Default: notes-user-pool
+
+  CognitoUserPoolDomainName:
+    Description: The domain to use for the Cognito User Pool being created.
+    Type: String
+    Default: notes-app
+
+  CognitoUserPoolClientName:
+    Description: The name of the Cognito User Pool Client being created.
+    Type: String
+    Default: notes-app
+
+  CognitoIdentityPoolName:
+    Description: The name of the Cognito Identity Pool being created.
+    Type: String
+    Default: notes-identity-pool
+
+  AuthRoleName:
+    Description: The name used in the IAM Auth and Unauth Roles being created.
+    Type: String
+    Default: Notes_App
+
+Conditions:
+  IsProduction: !Equals [!Ref Environment, "production"]
+
+Resources:
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Join
+        - "-"
+        - - !Ref CognitoUserPoolName
+          - !Ref Environment
+      UsernameAttributes:
+        - email
+
+  CognitoUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      Domain: !Join
+        - ""
+        - - !Ref CognitoUserPoolDomainName
+          - !If [IsProduction, "", "-"]
+          - !If [IsProduction, "", !Ref Environment]
+
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !Join
+        - "-"
+        - - !Ref CognitoUserPoolClientName
+          - !Ref Environment
+      GenerateSecret: false
+      UserPoolId: !Ref CognitoUserPool
+
+  CognitoIdentityPool:
+    Type: AWS::Cognito::IdentityPool
+    Properties:
+      IdentityPoolName: !Join
+        - "-"
+        - - !Ref CognitoIdentityPoolName
+          - !Ref Environment
+      AllowUnauthenticatedIdentities: false
+
+  AuthenticatedRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Join
+        - "_"
+        - - Cognito
+          - !Ref AuthRoleName
+          - Auth_Role
+          - !Ref Environment
+      Description: Cognito service auth role
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                - cognito-identity.amazonaws.com
+            Action:
+              - sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                cognito-identity.amazonaws.com:aud: !Ref CognitoIdentityPool
+              ForAnyValue:StringLike:
+                cognito-identity.amazonaws.com:amr: authenticated
+
+  UnAuthenticatedRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Join
+        - "_"
+        - - Cognito
+          - !Ref AuthRoleName
+          - UnAuth_Role
+          - !Ref Environment
+      Description: Cognito service unauth role
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                - cognito-identity.amazonaws.com
+            Action:
+              - sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                cognito-identity.amazonaws.com:aud: !Ref CognitoIdentityPool
+              ForAnyValue:StringLike:
+                cognito-identity.amazonaws.com:amr: unauthenticated
+
+  CognitoAuthRole:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: !Join
+        - "_"
+        - - Cognito
+          - !Ref AuthRoleName
+          - Auth_Role
+          - !Ref Environment
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - cognito-identity:*
+              - mobileanalytics:PutEvents
+              - cognito-sync:*
+            Resource: "*"
+      Roles:
+        - !Ref AuthenticatedRole
+
+  CognitoUnAuthRole:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: !Join
+        - "_"
+        - - Cognito
+          - !Ref AuthRoleName
+          - UnAuth_Role
+          - !Ref Environment
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - mobileanalytics:PutEvents
+              - cognito-sync:*
+            Resource: "*"
+      Roles:
+        - !Ref UnAuthenticatedRole
+
+  CognitoIdentityPoolSetRoles:
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
+    Properties:
+      IdentityPoolId: !Ref CognitoIdentityPool
+      Roles:
+        "authenticated": !GetAtt AuthenticatedRole.Arn
+        "unauthenticated": !GetAtt UnAuthenticatedRole.Arn
+
+Outputs:
+  CognitoUserPoolId:
+    Description: "UserPoolId of User Pool"
+    Value:
+      Ref: "CognitoUserPool"
+    Export:
+      Name: !Sub "${AWS::Region}-${AWS::StackName}-UserPool"
+
+  CognitoUserPoolClientId:
+    Description: "UserPoolAppId of User Pool"
+    Value:
+      Ref: CognitoUserPoolClient
+    Export:
+      Name: !Sub "${AWS::Region}-${AWS::StackName}-UserPoolApp"
+
+  CognitoIdentityPoolId:
+    Description: "IdentityPoolId of Identity Pool"
+    Value:
+      Ref: CognitoIdentityPool
+    Export:
+      Name: !Sub "${AWS::Region}-${AWS::StackName}-CognitoIdentityPoolId"
+
+  CognitoUserPoolDomain:
+    Description: "Domain name of Cognito User Pool"
+    Value:
+      Ref: CognitoUserPoolDomain
+    Export:
+      Name: !Sub "${AWS::Region}-${AWS::StackName}-CognitoUserPoolDomain"
