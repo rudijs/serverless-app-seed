@@ -1,65 +1,76 @@
-import React, { useState } from "react";
+import React from "react";
 import { inject, observer } from "mobx-react";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { Form as FormB, Button } from "react-bootstrap";
 import { Auth } from "aws-amplify";
 
 const SignInPage = inject("state")(
   observer(({ state, history }) => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-
-    function validateForm() {
-      return email.length > 0 && password.length > 0;
-    }
-
-    async function handleSubmit(event) {
-      event.preventDefault();
-
-      // setIsLoading(true);
-
-      try {
-        await Auth.signIn(email, password);
-
-        // const currentUserInfo = await Auth.currentUserInfo();
-        // console.log(101, currentUserInfo);
-
-        const currentSession = await Auth.currentSession();
-        // console.log(201, currentSession.isValid());
-        // console.log(301, currentSession.getIdToken());
-        // console.log(401, currentSession.getIdToken().payload.email);
-        // console.log(501, currentSession.getIdToken().payload["cognito:groups"]);
-
-        // state.setGroup("admin");
-        const groups = currentSession.getIdToken().payload["cognito:groups"];
-        if (groups) {
-          state.setGroup(groups[0]);
-        }
-
-        history.push("/dashboard");
-      } catch (e) {
-        console.log(901, e);
-        alert(e.message);
-        // setIsLoading(false);
-      }
-    }
-
     return (
-      <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="formBasicEmail">
-          <Form.Label>Email address</Form.Label>
-          <Form.Control autoFocus type="email" placeholder="Enter email" value={email} onChange={e => setEmail(e.target.value)} />
-          <Form.Text className="text-muted">We'll never share your email with anyone else.</Form.Text>
-        </Form.Group>
+      <Formik
+        initialValues={{ email: "", password: "" }}
+        validationSchema={Yup.object({
+          password: Yup.string()
+            .min(6, "Must be 6 to 12 characters in length")
+            .max(12, "Must be 6 to 12 characters in length")
+            .required("Required"),
+          email: Yup.string()
+            .email("Invalid email address")
+            .required("Required")
+        })}
+        onSubmit={async (values, { setSubmitting }) => {
+          // alert(JSON.stringify(values, null, 2));
 
-        <Form.Group controlId="formBasicPassword">
-          <Form.Label>Password</Form.Label>
-          <Form.Control type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-        </Form.Group>
-        <Button variant="primary" type="submit" disabled={!validateForm()}>
-          Submit
-        </Button>
-      </Form>
+          const { email, password } = values;
+
+          try {
+            await Auth.signIn(email, password);
+
+            // const currentUserInfo = await Auth.currentUserInfo();
+            // console.log(101, currentUserInfo);
+
+            const currentSession = await Auth.currentSession();
+            // console.log(201, currentSession.isValid());
+            // console.log(301, currentSession.getIdToken());
+            // console.log(401, currentSession.getIdToken().payload.email);
+            // console.log(501, currentSession.getIdToken().payload["cognito:groups"]);
+
+            // state.setGroup("admin");
+            const groups = currentSession.getIdToken().payload["cognito:groups"];
+            if (groups) {
+              state.setGroup(groups[0]);
+            }
+
+            history.push("/dashboard");
+          } catch (e) {
+            console.log(901, e);
+            alert(e.message);
+            setSubmitting(false);
+          } finally {
+          }
+        }}
+      >
+        {({ isSubmitting }) => (
+          <Form>
+            <FormB.Group>
+              <FormB.Label>Email Address</FormB.Label>
+              <Field as={FormB.Control} name="email" type="email" />
+              <ErrorMessage name="email" />
+            </FormB.Group>
+
+            <FormB.Group>
+              <FormB.Label>Password</FormB.Label>
+              <Field as={FormB.Control} name="password" type="password" />
+              <ErrorMessage name="password" />
+            </FormB.Group>
+
+            <Button variant="primary" type="submit" disabled={isSubmitting}>
+              Submit
+            </Button>
+          </Form>
+        )}
+      </Formik>
     );
   })
 );
