@@ -1,22 +1,46 @@
 ---
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: "Create Static Site"
+Description: >
+  Create Static Site
+
+  Usage examples
+
+  * First set some environment variables
+  source ./app-env.sh
+
+  * Create dev environment
+  aws cloudformation create-stack --stack-name client-dev --template-body file://static-site-stack.yaml \
+  --parameters \
+  ParameterKey=AcmCertificateArn,ParameterValue=$AWS_RJS_ACMCERTIFICATEARN \
+  ParameterKey=HostedZoneId,ParameterValue=$AWS_RJS_HOSTEDZONEID
+
+  * Delete dev environment
+  aws cloudformation delete-stack --stack-name client-dev
 
 Parameters:
+  Environment:
+    Description: The environment to use.
+    Type: String
+    Default: dev
+    AllowedValues: ["dev", "staging", "production"]
+    ConstraintDescription: must be dev, staging or production
+
   DomainName:
     Type: String
     AllowedPattern: ".+"
+    Default: rudijs.com
 
   SubDomain:
     Type: String
     AllowedPattern: ".+"
+    Default: app
 
-  Environment:
+  AcmCertificateArn:
     Type: String
     AllowedPattern: ".+"
 
-  AcmCertificateArn:
+  HostedZoneId:
     Type: String
     AllowedPattern: ".+"
 
@@ -93,7 +117,7 @@ Resources:
       HostedZoneName: !Join ["", [!Ref DomainName, "."]]
       AliasTarget:
         DNSName: !GetAtt [StaticSiteCDN, DomainName]
-        HostedZoneId: Z2FDTNDATAQYW2
+        HostedZoneId: !Ref HostedZoneId
 
 Outputs:
   StaticSiteBucketName:
