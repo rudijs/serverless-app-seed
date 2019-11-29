@@ -16,6 +16,7 @@ Description: >
   ParameterKey=HostedZoneId,ParameterValue=$AWS_RJS_HOSTEDZONEID
 
   * Delete dev environment
+  aws s3 rm s3://dev-app.rudijs.com --recursive
   aws cloudformation delete-stack --stack-name client-dev
 
 Parameters:
@@ -23,7 +24,7 @@ Parameters:
     Description: The environment to use.
     Type: String
     Default: dev
-    AllowedValues: ["dev", "staging", "production"]
+    AllowedValues: ["dev", "staging", "prod"]
     ConstraintDescription: must be dev, staging or production
 
   DomainName:
@@ -44,11 +45,17 @@ Parameters:
     Type: String
     AllowedPattern: ".+"
 
+Conditions:
+  IsProduction: !Equals [!Ref Environment, "prod"]
+
 Resources:
   StaticSiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Join ["", [!Ref Environment, "-", !Join [".", [!Ref SubDomain, !Ref DomainName]]]]
+      BucketName: !If
+        - IsProduction
+        - !Join [".", [!Ref SubDomain, !Ref DomainName]]
+        - !Join ["-", [!Ref Environment, !Join [".", [!Ref SubDomain, !Ref DomainName]]]]
       WebsiteConfiguration:
         ErrorDocument: index.html
         IndexDocument: index.html
@@ -90,7 +97,7 @@ Resources:
         Aliases:
           - !Join ["-", [!Ref Environment, !Join [".", [!Ref SubDomain, !Ref DomainName]]]]
         Origins:
-          - Id: SSVClientOriginID
+          - Id: RjsClientOriginID
             DomainName: !GetAtt [StaticSiteBucket, RegionalDomainName]
             S3OriginConfig:
               OriginAccessIdentity:
@@ -102,7 +109,7 @@ Resources:
         DefaultCacheBehavior:
           ForwardedValues:
             QueryString: true
-          TargetOriginId: SSVClientOriginID
+          TargetOriginId: RjsClientOriginID
           ViewerProtocolPolicy: redirect-to-https
         DefaultRootObject: index.html
         ViewerCertificate:
@@ -112,7 +119,10 @@ Resources:
   StaticSiteDomainName:
     Type: AWS::Route53::RecordSet
     Properties:
-      Name: !Join ["-", [!Ref Environment, !Join [".", [!Ref SubDomain, !Ref DomainName]]]]
+      Name: !If
+        - IsProduction
+        - !Join [".", [!Ref SubDomain, !Ref DomainName]]
+        - !Join ["-", [!Ref Environment, !Join [".", [!Ref SubDomain, !Ref DomainName]]]]
       Type: A
       HostedZoneName: !Join ["", [!Ref DomainName, "."]]
       AliasTarget:

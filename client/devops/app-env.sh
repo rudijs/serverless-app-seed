@@ -1,6 +1,8 @@
 #!/bin/bash
 
-export AWS_RJS_PROFILE=${1:-default}
+# export AWS_RJS_PROFILE=${1:-default}
+export AWS_RJS_PROFILE=default
+
 export AWS_RJS_ENVIRONMENT=${1:-dev}
 export AWS_RJS_SUBDOMAIN=${2:-app}
 export AWS_RJS_DOMAINNAME=${3:-rudijs.com}
