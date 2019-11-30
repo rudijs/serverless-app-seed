@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
 
-DOMAIN_NAME="${AWS_RJS_ENVIRONMENT}-${AWS_RJS_SUBDOMAIN}.${AWS_RJS_DOMAINNAME}"
 
-echo "==> Building $DOMAIN_NAME"
+echo "==> Building $RJS_DOMAIN_NAME"
 
 pushd ..
 
 npm run build
 
-echo "==> Deploying to AWS S3 ${DOMAIN_NAME}"
+echo "==> Deploying to AWS S3 ${RJS_DOMAIN_NAME}"
 
-aws --profile $AWS_RJS_PROFILE s3 sync --delete build/ s3://${DOMAIN_NAME}
+aws --profile $AWS_RJS_PROFILE s3 sync --delete build/ s3://${RJS_DOMAIN_NAME}
 
 popd
 

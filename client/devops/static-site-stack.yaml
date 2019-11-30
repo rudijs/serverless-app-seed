@@ -10,10 +10,7 @@ Description: >
   source ./app-env.sh
 
   * Create dev environment
-  aws cloudformation create-stack --stack-name client-dev --template-body file://static-site-stack.yaml \
-  --parameters \
-  ParameterKey=AcmCertificateArn,ParameterValue=$AWS_RJS_ACMCERTIFICATEARN \
-  ParameterKey=HostedZoneId,ParameterValue=$AWS_RJS_HOSTEDZONEID
+  aws cloudformation create-stack --stack-name client-dev --template-body file://static-site-stack.yaml --parameters ParameterKey=AcmCertificateArn,ParameterValue=$AWS_RJS_ACMCERTIFICATEARN
 
   * Delete dev environment
   aws s3 rm s3://dev-app.rudijs.com --recursive
@@ -38,10 +35,6 @@ Parameters:
     Default: app
 
   AcmCertificateArn:
-    Type: String
-    AllowedPattern: ".+"
-
-  HostedZoneId:
     Type: String
     AllowedPattern: ".+"
 
@@ -87,7 +80,7 @@ Resources:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
       CloudFrontOriginAccessIdentityConfig:
-        Comment: SSVClientOriginAccessID
+        Comment: RjsClientOriginAccessID
 
   StaticSiteCDN:
     Type: AWS::CloudFront::Distribution
@@ -127,7 +120,8 @@ Resources:
       HostedZoneName: !Join ["", [!Ref DomainName, "."]]
       AliasTarget:
         DNSName: !GetAtt [StaticSiteCDN, DomainName]
-        HostedZoneId: !Ref HostedZoneId
+        # CloudFront distribution Specify Z2FDTNDATAQYW2 for the HostedZoneId
+        HostedZoneId: Z2FDTNDATAQYW2
 
 Outputs:
   StaticSiteBucketName:
