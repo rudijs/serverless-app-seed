@@ -10,6 +10,9 @@ const State = types
   .views(self => ({
     get isAuthenticated() {
       return self.group !== "guest";
+    },
+    get groups() {
+      return self.group;
     }
   }));
 

@@ -21,7 +21,8 @@
 - `aws cloudformation create-stack --stack-name cognito-notes-app-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM`
 - `aws cloudformation create-stack --stack-name client-dev --template-body file://static-site-stack.yaml --parameters ParameterKey=AcmCertificateArn,ParameterValue=$AWS_RJS_ACMCERTIFICATEARN`
 - `source ./react-app-env.sh`
-- `./create-admin-user.sh`
+- `export ADMIN_PASSWORD=<random-passowrd>`
+- `./create-cognito-users.sh`
 - `./deploy.sh`
 
 ## Delete

@@ -27,9 +27,16 @@ const NavBar = inject("state")(
                   Dashboard
                 </Nav.Link>
               </Nav.Item>
+
+              <Nav.Item>
+                <Nav.Link as={Link} to="/profile" eventKey={3}>
+                  Profile
+                </Nav.Link>
+              </Nav.Item>
+
               <Nav.Item>
                 <Nav.Link
-                  eventKey={3}
+                  eventKey={4}
                   onClick={async () => {
                     try {
                       await Auth.signOut();

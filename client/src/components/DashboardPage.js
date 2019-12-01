@@ -1,11 +1,28 @@
 import React from "react";
+import { inject, observer } from "mobx-react";
+import Can from "./Can";
 
-function DashboardPage() {
-  return (
-    <div>
-      <p>Dashboard</p>
-    </div>
-  );
-}
+const DashboardPage = inject("state")(
+  observer(({ state }) => {
+    return (
+      <>
+        <p>Dashboard</p>
+        <p>Everyone Link</p>
+        <Can
+          role={state.groups}
+          // role="admin"
+          // role="guest"
+          perform="dashboard-page:visit"
+          yes={() => (
+            <div>
+              <p>Admin Link</p>
+            </div>
+          )}
+          no={() => <p>Can not Admin Link</p>}
+        />
+      </>
+    );
+  })
+);
 
 export default DashboardPage;
