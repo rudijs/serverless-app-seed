@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 
-if [ -z "$RJS_DOMAIN_NAME" ]; then
-      echo "==> ERROR: RJS_DOMAIN_NAME is not set"
-      exit 1
-fi
+export AWS_RJS_PROFILE=default
 
-if [ -z "$AWS_RJS_PROFILE" ]; then
-      echo "==> ERROR: AWS_RJS_PROFILE is not set"
-      exit 1
-fi
+export AWS_RJS_ENVIRONMENT=${1:-dev}
+export AWS_RJS_SUBDOMAIN=${2:-app}
+export AWS_RJS_DOMAINNAME=${3:-rudijs.com}
+export RJS_DOMAIN_NAME="${AWS_RJS_ENVIRONMENT}-${AWS_RJS_SUBDOMAIN}.${AWS_RJS_DOMAINNAME}"
 
 echo "==> Building $RJS_DOMAIN_NAME"
 
