@@ -7,21 +7,21 @@ Description: >
   Usage examples
 
   * Create dev environment
-  aws cloudformation create-stack --stack-name cognito-app-seed-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM
+  aws cloudformation create-stack --stack-name app-seed-cognito-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM
 
   * Delete dev environment
-  aws cloudformation delete-stack --stack-name cognito-app-seed-dev
+  aws cloudformation delete-stack --stack-name app-seed-cognito-dev
 
   * Create prod environment
   aws cloudformation create-stack \
-  --stack-name cognito-app-seed-prod \
+  --stack-name app-seed-cognito-prod \
   --template-body file://cognito-stack.yaml \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameters \
   ParameterKey=Environment,ParameterValue=production
 
   * Delete prod environment
-  aws cloudformation delete-stack --stack-name cognito-app-seed-prod
+  aws cloudformation delete-stack --stack-name app-seed-cognito-prod
 
 Parameters:
   Environment:

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ENVIRONMENT=${1:-dev}
-STACK_NAME=cognito-app-seed
+STACK_NAME=app-seed-cognito
 SERVERLESS_API_STACK_NAME=serverless-seed-app-api
 
 export AWS_RJS_COGNITO_REGION=ap-southeast-1

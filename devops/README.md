@@ -18,14 +18,14 @@ We'll list the steps for the two types here.
 - `sls --stage dev deploy`
 - `cd ../devops`
 - Create Cognito User Pool and Identity Pool
-- `aws cloudformation create-stack --stack-name cognito-app-seed-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=ApiOne,ParameterValue=$AWS_RJS_API_ONE`
+- `aws cloudformation create-stack --stack-name app-seed-cognito-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM`
 - Set some shell environment variable used for creating cloudfront distribution
-- `source ./scripts/app-env.sh`
+- `source ./app-env.sh`
 - Create the frontend infrastructure (S3 Bucket, CloudFront distribution, Route53 DNS)
 - `aws cloudformation create-stack --stack-name app-seed-client-dev --template-body file://static-site-stack.yaml --parameters ParameterKey=AcmCertificateArn,ParameterValue=$AWS_RJS_ACMCERTIFICATEARN`
 - Update the Cognito IAM role to allow access to our API(s)
 - `source ./react-app-env.sh`
-- `aws cloudformation update-stack --stack-name cognito-app-seed-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=ApiOne,ParameterValue=$AWS_RJS_API_ONE`
+- `aws cloudformation update-stack --stack-name app-seed-cognito-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=ApiOne,ParameterValue=$AWS_RJS_API_ONE`
 - Create test Admin and User accounts
 - `export ADMIN_PASSWORD=<enter_a_password>`
 - `./create-cognito-users.sh`
@@ -39,7 +39,7 @@ We'll list the steps for the two types here.
 - Frontend
 - `aws s3 rm s3://dev-app.rudijs.com --recursive`
 - `aws cloudformation delete-stack --stack-name app-seed-client-dev`
-- `aws cloudformation delete-stack --stack-name cognito-app-seed-dev`
+- `aws cloudformation delete-stack --stack-name app-seed-cognito-dev`
 - API
 - `cd api`
 - `sls --stage dev remove`
