@@ -7,21 +7,21 @@ Description: >
   Usage examples
 
   * Create dev environment
-  aws cloudformation create-stack --stack-name cognito-notes-app-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM
+  aws cloudformation create-stack --stack-name cognito-app-seed-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM
 
   * Delete dev environment
-  aws cloudformation delete-stack --stack-name cognito-notes-app-dev
+  aws cloudformation delete-stack --stack-name cognito-app-seed-dev
 
   * Create prod environment
   aws cloudformation create-stack \
-  --stack-name cognito-notes-app-prod \
+  --stack-name cognito-app-seed-prod \
   --template-body file://cognito-stack.yaml \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameters \
   ParameterKey=Environment,ParameterValue=production
 
   * Delete prod environment
-  aws cloudformation delete-stack --stack-name cognito-notes-app-prod
+  aws cloudformation delete-stack --stack-name cognito-app-seed-prod
 
 Parameters:
   Environment:
@@ -34,27 +34,32 @@ Parameters:
   CognitoUserPoolName:
     Description: The name of the Cognito User Pool being created.
     Type: String
-    Default: notes-user-pool
+    Default: app-seed-user-pool
 
   CognitoUserPoolDomainName:
     Description: The domain to use for the Cognito User Pool being created.
     Type: String
-    Default: notes-app
+    Default: app-seed-app
 
   CognitoUserPoolClientName:
     Description: The name of the Cognito User Pool Client being created.
     Type: String
-    Default: notes-app
+    Default: app-seed-app
 
   CognitoIdentityPoolName:
     Description: The name of the Cognito Identity Pool being created.
     Type: String
-    Default: notes-identity-pool
+    Default: app-seed-identity-pool
 
   AuthRoleName:
     Description: The name used in the IAM Auth and Unauth Roles being created.
     Type: String
-    Default: Notes_App
+    Default: Seed_App
+
+  ApiOne:
+    Description: The first API
+    Type: String
+    Default: not-yet-set
 
 Conditions:
   IsProduction: !Equals [!Ref Environment, "production"]
@@ -68,6 +73,8 @@ Resources:
         - - !Ref CognitoUserPoolName
           - !Ref Environment
       UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
         - email
 
   CognitoUserPoolDomain:
@@ -89,6 +96,8 @@ Resources:
           - !Ref Environment
       GenerateSecret: false
       UserPoolId: !Ref CognitoUserPool
+      ExplicitAuthFlows:
+        - ADMIN_NO_SRP_AUTH
 
   CognitoIdentityPool:
     Type: AWS::Cognito::IdentityPool
@@ -97,7 +106,14 @@ Resources:
         - "-"
         - - !Ref CognitoIdentityPoolName
           - !Ref Environment
+      # Don't allow unathenticated user
       AllowUnauthenticatedIdentities: false
+      # Link to our User Pool
+      CognitoIdentityProviders:
+        - ClientId:
+            Ref: CognitoUserPoolClient
+          ProviderName:
+            Fn::GetAtt: ["CognitoUserPool", "ProviderName"]
 
   AuthenticatedRole:
     Type: AWS::IAM::Role
@@ -167,6 +183,20 @@ Resources:
               - mobileanalytics:PutEvents
               - cognito-sync:*
             Resource: "*"
+          # Allow users to invoke our API
+          - Effect: "Allow"
+            Action:
+              - "execute-api:Invoke"
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:aws:execute-api:"
+                  - Ref: AWS::Region
+                  - ":"
+                  - Ref: AWS::AccountId
+                  - ":"
+                  - Ref: ApiOne
+                  - "/*"
       Roles:
         - !Ref AuthenticatedRole
 

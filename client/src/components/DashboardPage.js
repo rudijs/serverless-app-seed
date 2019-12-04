@@ -18,7 +18,6 @@ const DashboardPage = inject("state")(
               <p>Admin Link</p>
             </div>
           )}
-          no={() => <p>Can not Admin Link</p>}
         />
       </>
     );

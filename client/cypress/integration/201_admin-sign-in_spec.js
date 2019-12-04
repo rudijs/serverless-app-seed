@@ -1,5 +1,5 @@
 describe("The Sign Page", function() {
-  it("admin works", function() {
+  it("admin role works", function() {
     const email = Cypress.env("adminEmail");
 
     const password = Cypress.env("adminPassword");

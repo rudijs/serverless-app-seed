@@ -9,7 +9,7 @@ BUCKET_LOCATION=$(aws --profile $AWS_RJS_PROFILE s3api get-bucket-location --buc
 
 echo "==> Building $RJS_DOMAIN_NAME"
 
-pushd ..
+pushd ../client
 
 npm run build
 

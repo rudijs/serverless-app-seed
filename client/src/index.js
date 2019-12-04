@@ -10,6 +10,8 @@ import { state } from "./models/clientState";
 import Amplify, { Auth } from "aws-amplify";
 import config from "./config";
 
+console.log("config", config);
+
 Amplify.configure({
   Auth: {
     mandatorySignIn: true,
@@ -27,8 +29,10 @@ Amplify.configure({
     endpoints: [
       {
         name: "notes",
-        endpoint: config.apiGateway.URL,
-        region: config.apiGateway.REGION
+        region: config.apiGateway.REGION,
+        endpoint: config.apiGateway.URL
+        // endpoint: "https://yc609d159e.execute-api.ap-southeast-1.amazonaws.com/dev",
+        // region: "ap-southeast-1"
       }
     ]
   }

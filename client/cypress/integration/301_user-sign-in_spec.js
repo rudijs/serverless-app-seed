@@ -1,5 +1,5 @@
 describe("The Sign Page", function() {
-  it("user works", function() {
+  it("user role works", function() {
     const email = Cypress.env("userEmail");
 
     const password = Cypress.env("userPassword");
@@ -14,6 +14,6 @@ describe("The Sign Page", function() {
 
     cy.url().should("include", "/dashboard");
 
-    cy.contains("Can not Admin Link");
+    cy.contains("Admin Link").should("not.exist");
   });
 });
