@@ -91,6 +91,7 @@ We'll list the steps for the two types here.
 - `npm test`
 - Integration (end to end) tests using Cypress
 - Local env
+- `npm start`
 - `npm run cypress:open`
 - Dev env on AWS
 - `STAGE=dev npm run cypress:open`
