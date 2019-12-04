@@ -44,33 +44,53 @@ We'll list the steps for the two types here.
 - `cd api`
 - `sls --stage dev remove`
 
-## Create
+## Remove and Create again the serverless API
 
-- `cd projects/serverless-app-seed`
-- `cd client/devops`
-- `source ./app-env.sh`
-- `aws cloudformation create-stack --stack-name cognito-notes-app-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM`
-- `source ./react-app-env.sh`
-- `export ADMIN_PASSWORD=<random-passowrd>`
-- `./deploy.sh`
-
-## Delete
-
-- Frontend
-- `aws s3 rm s3://dev-app.rudijs.com --recursive`
-- `aws cloudformation delete-stack --stack-name client-dev`
-- `aws cloudformation delete-stack --stack-name cognito-notes-app-dev`
-- API
 - `cd api`
 - `sls --stage dev remove`
+- `sls --stage dev deploy`
+- We now have a new API URL endpoint and new API Gateway ID
+- Update the Cognito Identity Pool Auth Role to use the new API Gateway ID
+- `cd ../devops`
+- `source ./react-app-env.sh`
+- `aws cloudformation update-stack --stack-name app-seed-cognito-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=ApiOne,ParameterValue=$AWS_RJS_API_ONE`
+- Redeploy the React frontend app, it will also need to use new API URL endpoint
+- `./deploy.sh`
 
-## API
+## Remove and Create again the serverless S3 hosted Cloudfront ReactJS app
 
-- Deploy the API backend
+- `cd devops`
+- `aws s3 rm s3://dev-app.rudijs.com --recursive`
+- `aws cloudformation delete-stack --stack-name app-seed-client-dev`
+- After a few minutes to allow for the Cloudformation distribution to be removed....
+- Set some shell environment variable used for creating cloudfront distribution
+- `source ./app-env.sh`
+- Create the frontend infrastructure (S3 Bucket, CloudFront distribution, Route53 DNS)
+- `aws cloudformation create-stack --stack-name app-seed-client-dev --template-body file://static-site-stack.yaml --parameters ParameterKey=AcmCertificateArn,ParameterValue=$AWS_RJS_ACMCERTIFICATEARN`
+- Build and deploy the React App to S3 (and into the Cloudfront distribution)
+- `source ./react-app-env.sh`
+- `./deploy.sh`
+
+## Regular Frontend deployment
+
+- `cd devops`
+- `source ./react-app-env.sh`
 - `sls deploy`
 
-## Frontend
+## Regular serverless API deployment
 
-- Update the Cognito Identity Pool IAM Auth role to use the API
-- `source ./react-app-env.sh`
-- `aws cloudformation update-stack --stack-name cognito-notes-app-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=ApiOne,ParameterValue=$AWS_RJS_API_ONE`
+- `cd api`
+- `sls --stage dev deploy`
+- or
+- `sls --stage dev deploy -f hello`
+
+## Tests
+
+- Frontend Unit Tests using Jest
+- `cd client`
+- `npm test`
+- Integration (end to end) tests using Cypress
+- Local env
+- `npm run cypress:open`
+- Dev env on AWS
+- `STAGE=dev npm run cypress:open`
