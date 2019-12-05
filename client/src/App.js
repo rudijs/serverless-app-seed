@@ -16,8 +16,8 @@ const PrivateRoute = inject("state")(({ state, component: Component, ...rest }) 
 const App = () => {
   return (
     <Router>
-      <Container>
-        <NavBar />
+      <NavBar />
+      <Container style={{ marginTop: "2em" }}>
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route path="/signin" component={SignInPage} />

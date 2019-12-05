@@ -10,58 +10,62 @@ import { Auth } from "aws-amplify";
 const NavBar = inject("state")(
   observer(({ state, history }) => {
     return (
-      <Navbar>
+      <Navbar collapseOnSelect expand="sm" bg="dark" variant="dark">
         <Navbar.Brand as={Link} to="/">
           App
         </Navbar.Brand>
-        <Nav defaultActiveKey={1}>
-          <Nav.Item>
-            <Nav.Link as={Link} to="/" eventKey={1}>
-              Home
-            </Nav.Link>
-          </Nav.Item>
-          {state.isAuthenticated ? (
-            <>
-              <Nav.Item>
-                <Nav.Link as={Link} to="/dashboard" eventKey={2}>
-                  Dashboard
-                </Nav.Link>
-              </Nav.Item>
 
-              <Nav.Item>
-                <Nav.Link as={Link} to="/profile" eventKey={3}>
-                  Profile
-                </Nav.Link>
-              </Nav.Item>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-              <Nav.Item>
-                <Nav.Link
-                  eventKey={4}
-                  onClick={async () => {
-                    try {
-                      await Auth.signOut();
-                    } catch (e) {
-                      console.log(e);
-                    } finally {
-                      state.setGroup("guest");
-                      history.push("/");
-                    }
-                  }}
-                >
-                  Sign Out
-                </Nav.Link>
-              </Nav.Item>
-            </>
-          ) : (
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="mr-auto" defaultActiveKey={1}>
             <Nav.Item>
-              <Nav.Link as={Link} to="/signin" eventKey={4}>
-                Sign In
+              <Nav.Link as={Link} to="/" eventKey={1}>
+                Home
               </Nav.Link>
             </Nav.Item>
-          )}
-        </Nav>
+            {!state.isAuthenticated ? (
+              <Nav.Item>
+                <Nav.Link as={Link} to="/signin" eventKey={4}>
+                  Sign In
+                </Nav.Link>
+              </Nav.Item>
+            ) : (
+              <>
+                <Nav.Item>
+                  <Nav.Link as={Link} to="/dashboard" eventKey={2}>
+                    Dashboard
+                  </Nav.Link>
+                </Nav.Item>
+
+                <Nav.Item>
+                  <Nav.Link as={Link} to="/profile" eventKey={3}>
+                    Profile
+                  </Nav.Link>
+                </Nav.Item>
+
+                <Nav.Item>
+                  <Nav.Link
+                    eventKey={4}
+                    onClick={async () => {
+                      try {
+                        await Auth.signOut();
+                      } catch (e) {
+                        console.log(e);
+                      } finally {
+                        state.setGroup("guest");
+                        history.push("/");
+                      }
+                    }}
+                  >
+                    Sign Out
+                  </Nav.Link>
+                </Nav.Item>
+              </>
+            )}
+          </Nav>
+        </Navbar.Collapse>
       </Navbar>
-      // <span>Nav Bar: {state.group}</span> |&nbsp;
     );
   })
 );

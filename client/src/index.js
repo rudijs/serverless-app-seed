@@ -10,8 +10,6 @@ import { state } from "./models/clientState";
 import Amplify, { Auth } from "aws-amplify";
 import config from "./config";
 
-console.log("config", config);
-
 Amplify.configure({
   Auth: {
     mandatorySignIn: true,
