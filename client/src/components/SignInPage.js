@@ -3,6 +3,7 @@ import { inject, observer } from "mobx-react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Form as FormB, Button } from "react-bootstrap";
+import Spinner from "react-bootstrap/Spinner";
 import { Auth } from "aws-amplify";
 
 import Row from "react-bootstrap/Row";
@@ -40,6 +41,7 @@ const SignInPage = inject("state")(
                 const currentSession = await Auth.currentSession();
                 // console.log(201, currentSession.isValid());
                 // console.log(301, currentSession.getIdToken());
+                // console.log(301, currentSession.getIdToken().getJwtToken());
                 // console.log(401, currentSession.getIdToken().payload.email);
                 // console.log(501, currentSession.getIdToken().payload["cognito:groups"]);
 
@@ -58,25 +60,36 @@ const SignInPage = inject("state")(
               }
             }}
           >
-            {({ isSubmitting }) => (
-              <Form>
-                <FormB.Group>
-                  <FormB.Label>Email Address</FormB.Label>
-                  <Field as={FormB.Control} name="email" type="email" />
-                  <ErrorMessage name="email" />
-                </FormB.Group>
+            {({ isSubmitting }) => {
+              const spinner = isSubmitting ? (
+                <>
+                  <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                  &nbsp;
+                </>
+              ) : (
+                ""
+              );
 
-                <FormB.Group>
-                  <FormB.Label>Password</FormB.Label>
-                  <Field as={FormB.Control} name="password" type="password" />
-                  <ErrorMessage name="password" />
-                </FormB.Group>
+              return (
+                <Form>
+                  <FormB.Group>
+                    <FormB.Label>Email Address</FormB.Label>
+                    <Field as={FormB.Control} name="email" type="email" />
+                    <ErrorMessage name="email" />
+                  </FormB.Group>
 
-                <Button variant="primary" type="submit" disabled={isSubmitting}>
-                  Submit
-                </Button>
-              </Form>
-            )}
+                  <FormB.Group>
+                    <FormB.Label>Password</FormB.Label>
+                    <Field as={FormB.Control} name="password" type="password" />
+                    <ErrorMessage name="password" />
+                  </FormB.Group>
+
+                  <Button variant="primary" type="submit" disabled={isSubmitting}>
+                    {spinner}Submit
+                  </Button>
+                </Form>
+              );
+            }}
           </Formik>
         </Col>
       </Row>
