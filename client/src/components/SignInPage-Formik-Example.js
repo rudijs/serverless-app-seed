@@ -1,31 +1,31 @@
-import React from "react";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { Form as FormB, Button } from "react-bootstrap";
+import React from 'react'
+import {Formik, Field, Form, ErrorMessage} from 'formik'
+import * as Yup from 'yup'
+import {Form as FormB, Button} from 'react-bootstrap'
 
 const SignInPage = () => {
   return (
     <Formik
-      initialValues={{ firstName: "", lastName: "", email: "" }}
+      initialValues={{firstName: '', lastName: '', email: ''}}
       validationSchema={Yup.object({
         firstName: Yup.string()
-          .max(15, "Must be 15 characters or less")
-          .required("Required"),
+          .max(15, 'Must be 15 characters or less')
+          .required('Required'),
         lastName: Yup.string()
-          .max(20, "Must be 20 characters or less")
-          .required("Required"),
+          .max(20, 'Must be 20 characters or less')
+          .required('Required'),
         email: Yup.string()
-          .email("Invalid email address")
-          .required("Required")
+          .email('Invalid email address')
+          .required('Required'),
       })}
-      onSubmit={(values, { setSubmitting }) => {
+      onSubmit={(values, {setSubmitting}) => {
         setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
-          setSubmitting(false);
-        }, 400);
+          alert(JSON.stringify(values, null, 2))
+          setSubmitting(false)
+        }, 400)
       }}
     >
-      {({ isSubmitting }) => (
+      {({isSubmitting}) => (
         <Form>
           <FormB.Group>
             <FormB.Label>First Name</FormB.Label>
@@ -51,7 +51,7 @@ const SignInPage = () => {
         </Form>
       )}
     </Formik>
-  );
-};
+  )
+}
 
-export default SignInPage;
+export default SignInPage

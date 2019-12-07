@@ -1,39 +1,40 @@
-import rules from "../rbac-rules";
+import rules from '../rbac-rules'
 
 const check = (rules, role, action, data) => {
-  const permissions = rules[role];
+  const permissions = rules[role]
 
   if (!permissions) {
     // role is not present in the rules
-    return false;
+    return false
   }
 
-  const staticPermissions = permissions.static;
+  const staticPermissions = permissions.static
 
   if (staticPermissions && staticPermissions.includes(action)) {
     // static rule not provided for action
-    return true;
+    return true
   }
 
-  const dynamicPermissions = permissions.dynamic;
+  const dynamicPermissions = permissions.dynamic
 
   if (dynamicPermissions) {
-    const permissionCondition = dynamicPermissions[action];
+    const permissionCondition = dynamicPermissions[action]
     if (!permissionCondition) {
       // dynamic rule not provided for action
-      return false;
+      return false
     }
 
-    return permissionCondition(data);
+    return permissionCondition(data)
   }
-  return false;
-};
+  return false
+}
 
-const Can = props => (check(rules, props.role, props.perform, props.data) ? props.yes() : props.no());
+const Can = props =>
+  check(rules, props.role, props.perform, props.data) ? props.yes() : props.no()
 
 Can.defaultProps = {
   yes: () => null,
-  no: () => null
-};
+  no: () => null,
+}
 
-export default Can;
+export default Can

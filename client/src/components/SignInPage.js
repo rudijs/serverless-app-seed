@@ -1,44 +1,44 @@
-import React from "react";
-import { inject, observer } from "mobx-react";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { Form as FormB, Button } from "react-bootstrap";
-import Spinner from "react-bootstrap/Spinner";
-import { Auth } from "aws-amplify";
+import React from 'react'
+import {inject, observer} from 'mobx-react'
+import {Formik, Field, Form, ErrorMessage} from 'formik'
+import * as Yup from 'yup'
+import {Form as FormB, Button} from 'react-bootstrap'
+import Spinner from 'react-bootstrap/Spinner'
+import {Auth} from 'aws-amplify'
 
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 
-const SignInPage = inject("state")(
-  observer(({ state, history }) => {
+const SignInPage = inject('state')(
+  observer(({state, history}) => {
     return (
       <Row>
         <Col xs={12} md={8} lg={6}>
           <h3>Sign In</h3>
           <br />
           <Formik
-            initialValues={{ email: "", password: "" }}
+            initialValues={{email: '', password: ''}}
             validationSchema={Yup.object({
               password: Yup.string()
-                .min(6, "Must be 6 to 12 characters in length")
-                .max(12, "Must be 6 to 12 characters in length")
-                .required("Required"),
+                .min(6, 'Must be 6 to 12 characters in length')
+                .max(12, 'Must be 6 to 12 characters in length')
+                .required('Required'),
               email: Yup.string()
-                .email("Invalid email address")
-                .required("Required")
+                .email('Invalid email address')
+                .required('Required'),
             })}
-            onSubmit={async (values, { setSubmitting }) => {
+            onSubmit={async (values, {setSubmitting}) => {
               // alert(JSON.stringify(values, null, 2));
 
-              const { email, password } = values;
+              const {email, password} = values
 
               try {
-                await Auth.signIn(email, password);
+                await Auth.signIn(email, password)
 
                 // const currentUserInfo = await Auth.currentUserInfo();
                 // console.log(101, currentUserInfo);
 
-                const currentSession = await Auth.currentSession();
+                const currentSession = await Auth.currentSession()
                 // console.log(201, currentSession.isValid());
                 // console.log(301, currentSession.getIdToken());
                 // console.log(301, currentSession.getIdToken().getJwtToken());
@@ -46,29 +46,36 @@ const SignInPage = inject("state")(
                 // console.log(501, currentSession.getIdToken().payload["cognito:groups"]);
 
                 // state.setGroup("admin");
-                const groups = currentSession.getIdToken().payload["cognito:groups"];
+                const groups = currentSession.getIdToken().payload[
+                  'cognito:groups'
+                ]
                 if (groups) {
-                  state.setGroup(groups[0]);
+                  state.setGroup(groups[0])
                 }
 
-                history.push("/dashboard");
+                history.push('/dashboard')
               } catch (e) {
-                console.log(901, e);
-                alert(e.message);
-                setSubmitting(false);
-              } finally {
+                console.log(901, e)
+                alert(e.message)
+                setSubmitting(false)
               }
             }}
           >
-            {({ isSubmitting }) => {
+            {({isSubmitting}) => {
               const spinner = isSubmitting ? (
                 <>
-                  <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
                   &nbsp;
                 </>
               ) : (
-                ""
-              );
+                ''
+              )
 
               return (
                 <Form>
@@ -84,17 +91,21 @@ const SignInPage = inject("state")(
                     <ErrorMessage name="password" />
                   </FormB.Group>
 
-                  <Button variant="primary" type="submit" disabled={isSubmitting}>
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
                     {spinner}Submit
                   </Button>
                 </Form>
-              );
+              )
             }}
           </Formik>
         </Col>
       </Row>
-    );
-  })
-);
+    )
+  }),
+)
 
-export default SignInPage;
+export default SignInPage

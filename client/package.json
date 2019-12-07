@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.7.1",
+    "@material-ui/icons": "^4.5.1",
     "aws-amplify": "^1.2.4",
     "bootstrap": "^4.4.0",
     "crypto-js": "^3.1.9-1",
@@ -23,7 +25,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "lint": "eslint src cypress/integration",
+    "format": "prettier --write \"src/**/*.+(js|json)\" \"cypress/integration/**/*.+(js|json)\""
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -43,6 +47,11 @@
   "devDependencies": {
     "@types/jest": "^24.0.23",
     "cypress": "^3.7.0",
+    "eslint": "^6.7.2",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-plugin-cypress": "^2.7.0",
+    "eslint-plugin-react": "^7.17.0",
+    "prettier": "^1.19.1",
     "react-test-renderer": "^16.12.0"
   }
 }

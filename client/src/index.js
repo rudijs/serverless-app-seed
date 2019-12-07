@@ -1,14 +1,14 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import * as serviceWorker from "./serviceWorker";
+import React from 'react'
+import ReactDOM from 'react-dom'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import * as serviceWorker from './serviceWorker'
 
-import App from "./App";
-import { Provider } from "mobx-react";
-import { state } from "./models/clientState";
+import App from './App'
+import {Provider} from 'mobx-react'
+import {state} from './models/clientState'
 
-import Amplify, { Auth } from "aws-amplify";
-import config from "./config";
+import Amplify, {Auth} from 'aws-amplify'
+import config from './config'
 
 Amplify.configure({
   Auth: {
@@ -16,25 +16,25 @@ Amplify.configure({
     region: config.cognito.REGION,
     userPoolId: config.cognito.USER_POOL_ID,
     identityPoolId: config.cognito.IDENTITY_POOL_ID,
-    userPoolWebClientId: config.cognito.APP_CLIENT_ID
+    userPoolWebClientId: config.cognito.APP_CLIENT_ID,
   },
   Storage: {
     region: config.s3.REGION,
     bucket: config.s3.BUCKET,
-    identityPoolId: config.cognito.IDENTITY_POOL_ID
+    identityPoolId: config.cognito.IDENTITY_POOL_ID,
   },
   API: {
     endpoints: [
       {
-        name: "notes",
+        name: 'notes',
         region: config.apiGateway.REGION,
-        endpoint: config.apiGateway.URL
+        endpoint: config.apiGateway.URL,
         // endpoint: "https://yc609d159e.execute-api.ap-southeast-1.amazonaws.com/dev",
         // region: "ap-southeast-1"
-      }
-    ]
-  }
-});
+      },
+    ],
+  },
+})
 
 // We want an async function to run before any routes or rendering.
 // The async action is an AWS Amplify session lookup.
@@ -44,14 +44,14 @@ Amplify.configure({
 // This is because the routes load before the async session lookup finishes.
 async function onLoad() {
   try {
-    const currentSession = await Auth.currentSession();
-    const groups = currentSession.getIdToken().payload["cognito:groups"];
+    const currentSession = await Auth.currentSession()
+    const groups = currentSession.getIdToken().payload['cognito:groups']
     if (groups) {
-      state.setGroup(groups[0]);
+      state.setGroup(groups[0])
     }
   } catch (e) {
-    if (e !== "No current user") {
-      alert(e);
+    if (e !== 'No current user') {
+      alert(e)
     }
   }
 
@@ -59,13 +59,13 @@ async function onLoad() {
     <Provider state={state}>
       <App />
     </Provider>,
-    document.getElementById("root")
-  );
+    document.getElementById('root'),
+  )
 }
 
-onLoad();
+onLoad()
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+serviceWorker.unregister()

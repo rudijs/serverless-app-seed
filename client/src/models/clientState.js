@@ -1,19 +1,19 @@
-import { types } from "mobx-state-tree";
+import {types} from 'mobx-state-tree'
 
 const State = types
-  .model("State", { group: types.string })
+  .model('State', {group: types.string})
   .actions(self => ({
     setGroup(name) {
-      self.group = name;
-    }
+      self.group = name
+    },
   }))
   .views(self => ({
     get isAuthenticated() {
-      return self.group !== "guest";
+      return self.group !== 'guest'
     },
     get groups() {
-      return self.group;
-    }
-  }));
+      return self.group
+    },
+  }))
 
-export const state = State.create({ group: "guest", cn: 0 });
+export const state = State.create({group: 'guest', cn: 0})

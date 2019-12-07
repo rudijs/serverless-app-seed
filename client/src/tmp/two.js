@@ -1,6 +1,6 @@
-const AWS = require("aws-sdk");
-const sigV4Client = require("./sigV4Client").sigV4Client;
-const fetch = require("node-fetch");
+const AWS = require('aws-sdk')
+const sigV4Client = require('./sigV4Client').sigV4Client
+const fetch = require('node-fetch')
 
 // https://serverless-stack.com/chapters/connect-to-api-gateway-with-iam-auth.html
 // https://serverless-stack.com/chapters/mapping-cognito-identity-id-and-user-pool-id.html
@@ -12,24 +12,23 @@ const fetch = require("node-fetch");
 // sign request
 // make request
 
-AWS.config.region = process.env.AWS_RJS_COGNITO_REGION;
-console.log(AWS.config.credentials.accessKeyId);
+AWS.config.region = process.env.AWS_RJS_COGNITO_REGION
+console.log(AWS.config.credentials.accessKeyId)
 
-const userToken = process.env.idToken;
+const userToken = process.env.idToken
 
-const authenticator = `cognito-idp.${process.env.AWS_RJS_COGNITO_REGION}.amazonaws.com/${process.env.AWS_RJS_COGNITO_USER_POOL_ID}`;
+const authenticator = `cognito-idp.${process.env.AWS_RJS_COGNITO_REGION}.amazonaws.com/${process.env.AWS_RJS_COGNITO_USER_POOL_ID}`
 
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
   IdentityPoolId: process.env.REACT_APP_AWS_RJS_COGNITO_IDENTITY_POOL_ID,
   Logins: {
-    [authenticator]: userToken
-  }
-});
-
-(async () => {
+    [authenticator]: userToken,
+  },
+})
+;(async () => {
   try {
-    await AWS.config.credentials.getPromise();
-    console.log(AWS.config.credentials.accessKeyId);
+    await AWS.config.credentials.getPromise()
+    console.log(AWS.config.credentials.accessKeyId)
 
     const signedRequest = sigV4Client
       .newClient({
@@ -37,33 +36,33 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
         secretKey: AWS.config.credentials.secretAccessKey,
         sessionToken: AWS.config.credentials.sessionToken,
         region: process.env.AWS_RJS_COGNITO_REGION,
-        endpoint: process.env.REACT_APP_AWS_RJS_SERVICE_ENDPOINT
+        endpoint: process.env.REACT_APP_AWS_RJS_SERVICE_ENDPOINT,
       })
       .signRequest({
-        method: "GET", // method,
-        path: "/notes", //path,
+        method: 'GET', // method,
+        path: '/notes', //path,
         headers: {}, // headers,
         queryParams: {}, // queryParams,
-        body: {} // body
-      });
+        body: {}, // body
+      })
 
     // body = body ? JSON.stringify(body) : body;
-    headers = signedRequest.headers;
+    const headers = signedRequest.headers
 
     const results = await fetch(signedRequest.url, {
-      method: "GET", // method,
-      headers
+      method: 'GET', // method,
+      headers,
       // body: {} // body
-    });
+    })
 
     if (results.status !== 200) {
-      throw new Error(await results.text());
+      throw new Error(await results.text())
     }
 
-    const res2 = await results.json();
+    const res2 = await results.json()
 
-    console.log("res2", res2);
+    console.log('res2', res2)
   } catch (e) {
-    console.log("err", e);
+    console.log('err', e)
   }
-})();
+})()

@@ -1,9 +1,9 @@
-import React from "react";
-import { inject, observer } from "mobx-react";
-import Can from "./Can";
+import React from 'react'
+import {inject, observer} from 'mobx-react'
+import Can from './Can'
 
-const DashboardPage = inject("state")(
-  observer(({ state }) => {
+const DashboardPage = inject('state')(
+  observer(({state}) => {
     return (
       <>
         <p>Dashboard</p>
@@ -20,8 +20,8 @@ const DashboardPage = inject("state")(
           )}
         />
       </>
-    );
-  })
-);
+    )
+  }),
+)
 
-export default DashboardPage;
+export default DashboardPage
