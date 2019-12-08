@@ -34,6 +34,12 @@ const useStyles = makeStyles(theme => ({
   list: {
     width: 250,
   },
+  button: {
+    '&:hover, &:focus': {
+      background: 'black',
+      color: '#FFF',
+    },
+  },
 }))
 
 // export default function ButtonAppBar() {
@@ -64,28 +70,45 @@ const NavBar = inject('state')(
         onKeyDown={toggleDrawer(side, false)}
       >
         <List component="nav">
-          <ListItem
-            button
-            onClick={() => {
-              history.push('/dashboard')
-            }}
-          >
-            <ListItemIcon>
-              <StarIcon />
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" />
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => {
-              history.push('/profile')
-            }}
-          >
-            <ListItemIcon>
-              <StarIcon />
-            </ListItemIcon>
-            <ListItemText primary="Profile" />
-          </ListItem>
+          {!state.isAuthenticated ? (
+            <ListItem
+              button
+              onClick={() => {
+                history.push('/signin')
+              }}
+            >
+              <ListItemIcon>
+                <StarIcon />
+              </ListItemIcon>
+              <ListItemText primary="Sign In" />
+            </ListItem>
+          ) : (
+            <>
+              <ListItem
+                button
+                onClick={() => {
+                  history.push('/dashboard')
+                }}
+              >
+                <ListItemIcon>
+                  <StarIcon />
+                </ListItemIcon>
+                <ListItemText primary="Dashboard" />
+              </ListItem>
+
+              <ListItem
+                button
+                onClick={() => {
+                  history.push('/profile')
+                }}
+              >
+                <ListItemIcon>
+                  <StarIcon />
+                </ListItemIcon>
+                <ListItemText primary="Profile" />
+              </ListItem>
+            </>
+          )}
         </List>
       </div>
     )
@@ -103,11 +126,22 @@ const NavBar = inject('state')(
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" className={classes.title}>
-              <Link to="/">Home</Link>
+            <Typography
+              variant="h6"
+              className={classes.title}
+              onClick={() => {
+                history.push('/')
+              }}
+            >
+              Home
             </Typography>
             {!state.isAuthenticated ? (
-              <Button component={Link} to={'/signin'} color="inherit">
+              <Button
+                component={Link}
+                to={'/signin'}
+                color="inherit"
+                className={classes.button}
+              >
                 Sign In
               </Button>
             ) : (

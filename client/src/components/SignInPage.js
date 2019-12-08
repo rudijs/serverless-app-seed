@@ -9,6 +9,8 @@ import {Auth} from 'aws-amplify'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
+// todo: redirect if already signed in
+
 const SignInPage = inject('state')(
   observer(({state, history}) => {
     return (
