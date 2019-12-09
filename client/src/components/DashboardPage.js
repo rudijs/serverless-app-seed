@@ -1,23 +1,20 @@
 import React from 'react'
 import {inject, observer} from 'mobx-react'
 import Can from './Can'
+import {Typography} from '@material-ui/core'
 
 const DashboardPage = inject('state')(
   observer(({state}) => {
     return (
       <>
-        <p>Dashboard</p>
-        <p>Everyone Link</p>
+        <Typography paragraph>Dashboard</Typography>
+        <Typography paragraph>Everyone Link</Typography>
         <Can
           role={state.groups}
           // role="admin"
           // role="guest"
           perform="dashboard-page:visit"
-          yes={() => (
-            <div>
-              <p>Admin Link</p>
-            </div>
-          )}
+          yes={() => <Typography paragraph>Admin Link</Typography>}
         />
       </>
     )

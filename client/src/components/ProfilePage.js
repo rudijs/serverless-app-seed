@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import {inject, observer} from 'mobx-react'
 import {API} from 'aws-amplify'
-import Spinner from 'react-bootstrap/Spinner'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import {Typography} from '@material-ui/core'
 
 const ProfilePage = inject('state')(
   observer(({state}) => {
@@ -26,17 +27,13 @@ const ProfilePage = inject('state')(
       getToken()
     }, [])
 
-    const profile = <p>Res: {profileData}</p>
+    const profile = <Typography paragraph>Res: {profileData}</Typography>
 
     return (
       <>
-        <h1>Profile Page</h1>
-        <p>Group: {state.groups}</p>
-        {profile && !loading ? (
-          profile
-        ) : (
-          <Spinner animation="grow" variant="info" />
-        )}
+        <Typography variant="h3">Profile Page</Typography>
+        <Typography paragraph>Group: {state.groups}</Typography>
+        {profile && !loading ? profile : <CircularProgress />}
       </>
     )
   }),

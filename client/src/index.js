@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import 'bootstrap/dist/css/bootstrap.min.css'
 import * as serviceWorker from './serviceWorker'
 
 import {createMuiTheme} from '@material-ui/core/styles'
 import {blueGrey} from '@material-ui/core/colors'
 import {ThemeProvider} from '@material-ui/styles'
+import {CssBaseline} from '@material-ui/core'
 
 import App from './App'
 import {Provider} from 'mobx-react'
@@ -61,14 +61,16 @@ async function onLoad() {
       state.setGroup(groups[0])
     }
   } catch (e) {
-    if (e !== 'No current user') {
-      alert(e)
-    }
+    // user has no current session
+    // if (e !== 'No current user') {
+    // alert(e)
+    // }
   }
 
   ReactDOM.render(
     <Provider state={state}>
       <ThemeProvider theme={theme}>
+        <CssBaseline />
         <App />
       </ThemeProvider>
     </Provider>,

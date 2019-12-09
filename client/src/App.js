@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom'
 import {inject} from 'mobx-react'
 
-import Container from 'react-bootstrap/Container'
+import Container from '@material-ui/core/Container'
 import NavBar from './components/layout/Nav'
 import HomePage from './components/HomePage'
 import DashboardPage from './components/DashboardPage'
@@ -33,7 +33,8 @@ const App = () => {
   return (
     <Router>
       <NavBar />
-      <Container style={{marginTop: '2em'}}>
+      {/* <Container style={{marginTop: '2em'}}> */}
+      <Container maxWidth="md">
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route path="/signin" component={SignInPage} />

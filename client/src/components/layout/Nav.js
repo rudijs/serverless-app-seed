@@ -4,24 +4,27 @@ import {inject, observer} from 'mobx-react'
 import {Link} from 'react-router-dom'
 import {Auth} from 'aws-amplify'
 
-// import Navbar from "react-bootstrap/Navbar";
-// import Nav from "react-bootstrap/Nav";
 import {makeStyles} from '@material-ui/core/styles'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
-import IconButton from '@material-ui/core/IconButton'
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from '@material-ui/core'
+
+import StarIcon from '@material-ui/icons/Star'
 import MenuIcon from '@material-ui/icons/Menu'
 
-import Drawer from '@material-ui/core/Drawer'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import StarIcon from '@material-ui/icons/Star'
-import ListItemText from '@material-ui/core/ListItemText'
-
 const useStyles = makeStyles(theme => ({
+  // '@global': {
+  //   margin: 0,
+  // },
   root: {
     flexGrow: 1,
   },
@@ -115,7 +118,7 @@ const NavBar = inject('state')(
 
     return (
       <div className={classes.root}>
-        <AppBar position="static">
+        <AppBar position="static" style={{margin: 0}}>
           <Toolbar>
             <IconButton
               edge="start"
