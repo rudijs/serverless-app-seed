@@ -1,38 +1,23 @@
 import React from 'react'
 import {inject, observer} from 'mobx-react'
-
-import {Formik, Field, Form} from 'formik'
+import {Formik, Field, Form, ErrorMessage} from 'formik'
 import * as Yup from 'yup'
+import {Form as FormB, Button} from 'react-bootstrap'
+import Spinner from 'react-bootstrap/Spinner'
 import {Auth} from 'aws-amplify'
 
-import Paper from '@material-ui/core/Paper'
-import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import {makeStyles} from '@material-ui/core/styles'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 
 // todo: redirect if already signed in
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(3, 2),
-  },
-  progresStyle: {
-    marginLeft: '1rem',
-    color: 'blue',
-  },
-  container: {
-    maxWidth: '500px',
-  },
-}))
-
 const SignInPage = inject('state')(
   observer(({state, history}) => {
-    const classes = useStyles()
-
     return (
-      <div className={classes.container}>
-        <Paper className={classes.root}>
+      <Row>
+        <Col xs={12} md={8} lg={6}>
+          <h3>Sign In</h3>
+          <br />
           <Formik
             initialValues={{email: '', password: ''}}
             validationSchema={Yup.object({
@@ -78,55 +63,49 @@ const SignInPage = inject('state')(
               }
             }}
           >
-            {({isSubmitting, errors, touched}) => {
+            {({isSubmitting}) => {
+              const spinner = isSubmitting ? (
+                <>
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
+                  &nbsp;
+                </>
+              ) : (
+                ''
+              )
+
               return (
                 <Form>
-                  <Field
-                    as={TextField}
-                    name="email"
-                    type="email"
-                    label="Email Address"
-                    helperText={touched.email ? errors.email : ''}
-                    error={touched.email && Boolean(errors.email)}
-                  />
+                  <FormB.Group>
+                    <FormB.Label>Email Address</FormB.Label>
+                    <Field as={FormB.Control} name="email" type="email" />
+                    <ErrorMessage name="email" />
+                  </FormB.Group>
 
-                  <br />
+                  <FormB.Group>
+                    <FormB.Label>Password</FormB.Label>
+                    <Field as={FormB.Control} name="password" type="password" />
+                    <ErrorMessage name="password" />
+                  </FormB.Group>
 
-                  <Field
-                    as={TextField}
-                    name="password"
-                    type="password"
-                    label="Password"
-                    helperText={touched.password ? errors.password : ''}
-                    error={touched.password && Boolean(errors.password)}
-                  />
-
-                  <br />
-                  <br />
-                  <br />
-
-                  <div className={classes.wrapper}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      disabled={isSubmitting}
-                      type="submit"
-                    >
-                      Sign In
-                      {isSubmitting && (
-                        <CircularProgress
-                          size="1rem"
-                          className={classes.progresStyle}
-                        />
-                      )}
-                    </Button>
-                  </div>
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
+                    {spinner}Submit
+                  </Button>
                 </Form>
               )
             }}
           </Formik>
-        </Paper>
-      </div>
+        </Col>
+      </Row>
     )
   }),
 )
