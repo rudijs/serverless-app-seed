@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import * as serviceWorker from './serviceWorker'
 
+import {createMuiTheme} from '@material-ui/core/styles'
+import {blueGrey} from '@material-ui/core/colors'
+import {ThemeProvider} from '@material-ui/styles'
+
 import App from './App'
 import {Provider} from 'mobx-react'
 import {state} from './models/clientState'
@@ -36,6 +40,13 @@ Amplify.configure({
   },
 })
 
+const theme = createMuiTheme({
+  palette: {
+    primary: blueGrey,
+    type: 'light',
+  },
+})
+
 // We want an async function to run before any routes or rendering.
 // The async action is an AWS Amplify session lookup.
 // We want to complete this lookup before any routes load as the private routes will check for an amplify session.
@@ -57,7 +68,9 @@ async function onLoad() {
 
   ReactDOM.render(
     <Provider state={state}>
-      <App />
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
     </Provider>,
     document.getElementById('root'),
   )
