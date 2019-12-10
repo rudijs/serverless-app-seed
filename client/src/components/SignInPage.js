@@ -6,6 +6,7 @@ import * as Yup from 'yup'
 import {Auth} from 'aws-amplify'
 
 import Paper from '@material-ui/core/Paper'
+import {Typography} from '@material-ui/core'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -15,6 +16,7 @@ import {makeStyles} from '@material-ui/core/styles'
 
 const useStyles = makeStyles(theme => ({
   root: {
+    marginTop: theme.spacing(2),
     padding: theme.spacing(3, 2),
   },
   progresStyle: {
@@ -23,6 +25,10 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     maxWidth: '500px',
+  },
+  formInput: {
+    width: '100%',
+    marginTop: theme.spacing(4),
   },
 }))
 
@@ -81,10 +87,13 @@ const SignInPage = inject('state')(
             {({isSubmitting, errors, touched}) => {
               return (
                 <Form>
+                  <Typography variant="h3">Sign In</Typography>
+
                   <Field
-                    as={TextField}
-                    name="email"
                     type="email"
+                    className={classes.formInput}
+                    name="email"
+                    as={TextField}
                     label="Email Address"
                     helperText={touched.email ? errors.email : ''}
                     error={touched.email && Boolean(errors.email)}
@@ -93,21 +102,19 @@ const SignInPage = inject('state')(
                   <br />
 
                   <Field
-                    as={TextField}
-                    name="password"
                     type="password"
+                    className={classes.formInput}
+                    name="password"
+                    as={TextField}
                     label="Password"
                     helperText={touched.password ? errors.password : ''}
                     error={touched.password && Boolean(errors.password)}
                   />
 
-                  <br />
-                  <br />
-                  <br />
-
                   <div className={classes.wrapper}>
                     <Button
                       variant="contained"
+                      className={classes.formInput}
                       color="primary"
                       disabled={isSubmitting}
                       type="submit"
