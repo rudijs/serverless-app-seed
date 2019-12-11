@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if [ -z "$REACT_APP_AWS_RJS_GOOGLE_TRACKING_ID" ]; then
+      echo "==> INFO: REACT_APP_AWS_RJS_GOOGLE_TRACKING_ID is not set"
+fi
+
 export AWS_RJS_PROFILE=default
 export AWS_RJS_ENVIRONMENT=${1:-dev}
 export AWS_RJS_SUBDOMAIN=${2:-app}

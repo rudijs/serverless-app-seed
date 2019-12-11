@@ -1,10 +1,8 @@
 import React from 'react'
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Redirect,
-} from 'react-router-dom'
+import {Router, Route, Switch, Redirect} from 'react-router-dom'
+import customHistory from './history'
+import ReactGA from 'react-ga'
+import config from './config'
 import {inject} from 'mobx-react'
 
 import Container from '@material-ui/core/Container'
@@ -13,6 +11,17 @@ import HomePage from './components/HomePage'
 import DashboardPage from './components/DashboardPage'
 import ProfilePage from './components/ProfilePage'
 import SignInPage from './components/SignInPage'
+
+const trackingId = config.googleAnalytics.trackingId
+
+if (trackingId) {
+  ReactGA.initialize(trackingId)
+
+  customHistory.listen(location => {
+    ReactGA.set({page: location.pathname}) // Update the user's current page
+    ReactGA.pageview(location.pathname) // Record a pageview for the given page
+  })
+}
 
 const PrivateRoute = inject(
   'state',
@@ -31,7 +40,7 @@ const PrivateRoute = inject(
 
 const App = () => {
   return (
-    <Router>
+    <Router history={customHistory}>
       <NavBar />
       {/* <Container style={{marginTop: '2em'}}> */}
       <Container maxWidth="md">

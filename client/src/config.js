@@ -17,4 +17,7 @@ export default {
     // APP_CLIENT_ID: "4gd43v5rg5f1vummad0nna5pql",
     // IDENTITY_POOL_ID: "ap-southeast-1:20ed8f70-f7fb-479c-9e32-3cca5a0b7438"
   },
+  googleAnalytics: {
+    trackingId: process.env.REACT_APP_AWS_RJS_GOOGLE_TRACKING_ID,
+  },
 }
