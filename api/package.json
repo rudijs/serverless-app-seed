@@ -11,6 +11,10 @@
   "license": "ISC",
   "devDependencies": {
     "aws-sdk": "^2.582.0",
-    "serverless-bundle": "^1.2.5"
+    "eslint-config-prettier": "^6.7.0",
+    "serverless-bundle": "^1.2.5",
+    "serverless-iam-roles-per-function": "^2.0.2",
+    "serverless-prune-plugin": "^1.4.1",
+    "serverless-pseudo-parameters": "^2.5.0"
   }
 }

@@ -6,12 +6,25 @@ package:
 
 plugins:
   - serverless-bundle # Package our functions with Webpack
+  - serverless-pseudo-parameters
+  - serverless-iam-roles-per-function # https://github.com/functionalone/serverless-iam-roles-per-function
+
+custom:
+  prune:
+    automatic: true
+    number:
+  cognito:
+    userPoolId: ${env:AWS_RJS_COGNITO_USER_POOL_ID, 'unset-user-pool'}
 
 provider:
   name: aws
   runtime: nodejs10.x
-  stage: dev
-  region: ap-southeast-1
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'ap-southeast-1'}
+
+environment:
+  region: ${self:provider.region}
+  userPoolId: ${self:custom.cognito.userPoolId}
 
 functions:
   hello:
@@ -22,6 +35,15 @@ functions:
           method: get
           cors: true
           authorizer: aws_iam
+
+  users:
+    handler: functions/users.main
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - cognito-idp:ListUsers
+        # Resource: "arn:aws:cognito-idp:${self:provider.region}:#{AWS::AccountId}:*"
+        Resource: "arn:aws:cognito-idp:${self:provider.region}:#{AWS::AccountId}:userpool/${self:custom.cognito.userPoolId}"
 
 # Create our resources with separate CloudFormation templates
 resources:
