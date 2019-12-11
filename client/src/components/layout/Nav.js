@@ -47,14 +47,12 @@ const useStyles = makeStyles(theme => ({
 
 // export default function ButtonAppBar() {
 const NavBar = inject('state')(
-  observer(({state, history}) => {
+  observer(({state, history, location}) => {
     const classes = useStyles()
 
     const [open, setOpen] = React.useState(false)
 
     const toggleDrawer = () => event => {
-      console.log('toggleDrawer')
-
       if (
         event.type === 'keydown' &&
         (event.key === 'Tab' || event.key === 'Shift')
@@ -76,6 +74,7 @@ const NavBar = inject('state')(
           {!state.isAuthenticated ? (
             <ListItem
               button
+              selected={location.pathname === '/signin'}
               onClick={() => {
                 history.push('/signin')
               }}
@@ -89,6 +88,7 @@ const NavBar = inject('state')(
             <>
               <ListItem
                 button
+                selected={location.pathname === '/dashboard'}
                 onClick={() => {
                   history.push('/dashboard')
                 }}
@@ -101,6 +101,7 @@ const NavBar = inject('state')(
 
               <ListItem
                 button
+                selected={location.pathname === '/profile'}
                 onClick={() => {
                   history.push('/profile')
                 }}
