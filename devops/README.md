@@ -12,7 +12,6 @@ We'll list the steps for the two types here.
 ## Create everything from scratch (new environment)
 
 - Create Dev Environment
-- TODO: use app-seed-...-dev name...
 - Deploy the serverless API
 - `cd api`
 - `sls --stage dev deploy`

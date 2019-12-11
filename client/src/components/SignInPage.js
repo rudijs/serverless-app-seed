@@ -5,26 +5,29 @@ import {Formik, Field, Form} from 'formik'
 import * as Yup from 'yup'
 import {Auth} from 'aws-amplify'
 
+import {makeStyles} from '@material-ui/core/styles'
+import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
 import {Typography} from '@material-ui/core'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import {makeStyles} from '@material-ui/core/styles'
 
 // todo: redirect if already signed in
 
 const useStyles = makeStyles(theme => ({
-  root: {
+  container: {
+    [theme.breakpoints.up('md')]: {
+      width: '50%',
+    },
+  },
+  paper: {
     marginTop: theme.spacing(2),
-    padding: theme.spacing(3, 2),
+    padding: theme.spacing(2),
   },
   progresStyle: {
     marginLeft: '1rem',
     color: 'blue',
-  },
-  container: {
-    maxWidth: '500px',
   },
   formInput: {
     width: '100%',
@@ -37,8 +40,8 @@ const SignInPage = inject('state')(
     const classes = useStyles()
 
     return (
-      <div className={classes.container}>
-        <Paper className={classes.root}>
+      <Box className={classes.container} mx="auto">
+        <Paper className={classes.paper}>
           <Formik
             initialValues={{email: '', password: ''}}
             validationSchema={Yup.object({
@@ -133,7 +136,7 @@ const SignInPage = inject('state')(
             }}
           </Formik>
         </Paper>
-      </div>
+      </Box>
     )
   }),
 )
