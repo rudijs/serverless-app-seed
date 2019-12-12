@@ -11,34 +11,40 @@ We'll list the steps for the two types here.
 
 ## Create everything from scratch (new environment)
 
-- Prerequisite: Domain name set up with TLS certificate.
+Prerequisite: Domain name set up with TLS certificate.
+
+Set some shell environment variable used for creating AWS infrastructure
+
 - `cd devops`
-- Set some shell environment variable used for creating AWS infrastructure
 - `source ./env.sh`
 
-- Create Cognito User Pool and Identity Pool first
-- `aws cloudformation create-stack --stack-name app-seed-cognito-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM`
+Create Cognito User Pool and Identity Pool first
 
+- `aws cloudformation create-stack --stack-name app-seed-cognito-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM`
 - Create test Admin and User accounts
 - `source ./env-cognito.sh`
 - `export AWS_APP_ADMIN_PASSWORD=<enter_a_password>`
 - `./create-cognito-users.sh`
 
-- `source ./react-app-env.sh`
-- Deploy the serverless API
+Deploy the serverless API
+
 - `cd ../api`
 - `sls --stage dev deploy`
 - `cd ../devops`
 
-- Update the Cognito IAM role to allow access to our API(s)
+Update the Cognito IAM role to allow access to our API(s)
+
 - `source ./env-serverless.sh`
 - `aws cloudformation update-stack --stack-name app-seed-cognito-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=ApiOne,ParameterValue=$AWS_APP_API_ONE`
 
-- Create the frontend infrastructure (S3 Bucket, CloudFront distribution, Route53 DNS)
+Create the frontend infrastructure (S3 Bucket, CloudFront distribution, Route53 DNS)
+
 - `aws cloudformation create-stack --stack-name app-seed-client-dev --template-body file://static-site-stack.yaml --parameters ParameterKey=AcmCertificateArn,ParameterValue=$AWS_APP_ACMCERTIFICATEARN`
 
-- Build and deploy the React App to S3 (and into the Cloudfront distribution)
+Build and deploy the React App to S3 (and into the Cloudfront distribution)
+
 - TODO: put in AWS secrets REACT_APP_AWS_APP_GOOGLE_TRACKING_ID
+- `export AWS_APP_GOOGLE_TRACKING_ID=<ID>`
 - `source ./env-react.sh`
 - `./deploy.sh`
 - The deploy script will output two URLs.

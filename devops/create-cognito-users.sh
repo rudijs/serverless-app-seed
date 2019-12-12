@@ -1,24 +1,25 @@
 #!/bin/bash
 
-if [ -z "$AWS_APP_COGNITO_REGION" ]; then
-      echo "==> ERROR: AWS_APP_COGNITO_REGION is not set"
-      exit 1
-fi
+# required env variables
+REQUIRED_VARIABLES="
+AWS_APP_COGNITO_REGION
+AWS_APP_COGNITO_APP_CLIENT_ID
+AWS_APP_COGNITO_USER_POOL_ID
+AWS_APP_COGNITO_IDENTITY_POOL_ID
+AWS_APP_ADMIN_PASSWORD
+"
 
-if [ -z "$AWS_APP_COGNITO_APP_CLIENT_ID" ]; then
-      echo "==> ERROR: AWS_APP_COGNITO_APP_CLIENT_ID is not set"
-      exit 1
-fi
+for VARIABLE in $REQUIRED_VARIABLES
+do
+      name="$VARIABLE"
 
-if [ -z "$AWS_APP_COGNITO_USER_POOL_ID" ]; then
-      echo "==> ERROR: AWS_APP_COGNITO_USER_POOL_ID is not set"
-      exit 1
-fi
-
-if [ -z "$AWS_APP_ADMIN_PASSWORD" ]; then
-      echo "==> ERROR: ADMIN_PASSWORD is not set"
-      exit 1
-fi
+      if [ -z "${!VARIABLE}" ]; then
+        echo "==> ERROR: $VARIABLE is not set"
+        exit 0
+      else
+        echo "==> $VARIABLE => ${!VARIABLE}"
+      fi
+done
 
 echo "==> Create Admin role"
 aws cognito-idp sign-up \

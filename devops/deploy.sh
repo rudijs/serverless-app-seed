@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if ! [ -x "$(command -v aws)" ]; then
+  echo '==> Error: aws CLI not installed.' >&2
+  exit 0
+fi
 
 # required env variables
 REQUIRED_VARIABLES="
