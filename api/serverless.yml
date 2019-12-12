@@ -14,7 +14,7 @@ custom:
     automatic: true
     number:
   cognito:
-    userPoolId: ${env:AWS_RJS_COGNITO_USER_POOL_ID, 'unset-user-pool'}
+    userPoolId: ${env:AWS_APP_COGNITO_USER_POOL_ID, 'unset-user-pool'}
 
 provider:
   name: aws

@@ -11,26 +11,35 @@ We'll list the steps for the two types here.
 
 ## Create everything from scratch (new environment)
 
-- Create Cognito User Pool and Identity Pool first
+- Prerequisite: Domain name set up with TLS certificate.
 - `cd devops`
+- Set some shell environment variable used for creating AWS infrastructure
+- `source ./env.sh`
+
+- Create Cognito User Pool and Identity Pool first
 - `aws cloudformation create-stack --stack-name app-seed-cognito-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM`
-- Set some shell environment variable used for creating cloudfront distribution
-- `source ./app-env.sh`
-- `source ./react-app-env.sh`
+
 - Create test Admin and User accounts
-- `export ADMIN_PASSWORD=<enter_a_password>`
+- `source ./env-cognito.sh`
+- `export AWS_APP_ADMIN_PASSWORD=<enter_a_password>`
 - `./create-cognito-users.sh`
+
+- `source ./react-app-env.sh`
 - Deploy the serverless API
 - `cd ../api`
 - `sls --stage dev deploy`
 - `cd ../devops`
+
 - Update the Cognito IAM role to allow access to our API(s)
-- `source ./react-app-env.sh`
-- `aws cloudformation update-stack --stack-name app-seed-cognito-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=ApiOne,ParameterValue=$AWS_RJS_API_ONE`
+- `source ./env-serverless.sh`
+- `aws cloudformation update-stack --stack-name app-seed-cognito-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=ApiOne,ParameterValue=$AWS_APP_API_ONE`
+
 - Create the frontend infrastructure (S3 Bucket, CloudFront distribution, Route53 DNS)
-- `aws cloudformation create-stack --stack-name app-seed-client-dev --template-body file://static-site-stack.yaml --parameters ParameterKey=AcmCertificateArn,ParameterValue=$AWS_RJS_ACMCERTIFICATEARN`
+- `aws cloudformation create-stack --stack-name app-seed-client-dev --template-body file://static-site-stack.yaml --parameters ParameterKey=AcmCertificateArn,ParameterValue=$AWS_APP_ACMCERTIFICATEARN`
+
 - Build and deploy the React App to S3 (and into the Cloudfront distribution)
-- TODO: put in AWS secrets REACT_APP_AWS_RJS_GOOGLE_TRACKING_ID
+- TODO: put in AWS secrets REACT_APP_AWS_APP_GOOGLE_TRACKING_ID
+- `source ./env-react.sh`
 - `./deploy.sh`
 - The deploy script will output two URLs.
 - The S3 direct URL is immediately available, the DNS domain name will take a short while as the Cloudfront distributions takes time to initialize.
