@@ -11,18 +11,17 @@ exports.main = async (event, context) => {
     headers
   }
 
-  AWS.config.region = process.env.region
+  AWS.config.region = process.env.REGION
+
   const cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider()
 
   const params = {
-    UserPoolId: process.env.userPoolId,
+    UserPoolId: process.env.USER_POOL_ID,
     AttributesToGet: ["sub", "email"]
   }
 
   try {
     const res = await cognitoidentityserviceprovider.listUsers(params).promise()
-    // eslint-disable-next-line no-console
-    console.log("res", res)
     result.statusCode = 200
     result.body = JSON.stringify(res.Users)
   } catch (e) {

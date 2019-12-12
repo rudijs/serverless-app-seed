@@ -21,10 +21,9 @@ provider:
   runtime: nodejs10.x
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'ap-southeast-1'}
-
-environment:
-  region: ${self:provider.region}
-  userPoolId: ${self:custom.cognito.userPoolId}
+  environment:
+    REGION: ${self:provider.region}
+    USER_POOL_ID: ${self:custom.cognito.userPoolId}
 
 functions:
   hello:
