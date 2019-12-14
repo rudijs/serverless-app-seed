@@ -6,7 +6,7 @@ describe('The Sign Page', function() {
 
     cy.visit('/')
 
-    cy.get('#root > div > nav > div > div:nth-child(2) > a').click()
+    cy.get('.MuiToolbar-root > .MuiButton-root > .MuiButton-label').click()
 
     cy.get('input[name=email]').type(email)
 
