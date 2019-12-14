@@ -37,6 +37,12 @@ functions:
 
   users:
     handler: functions/users.main
+    events:
+      - http:
+          path: user
+          method: get
+          cors: true
+          authorizer: aws_iam
     iamRoleStatements:
       - Effect: Allow
         Action:

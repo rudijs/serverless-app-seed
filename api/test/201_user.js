@@ -19,7 +19,7 @@ describe("HTTP assertions", function() {
     }
   })
 
-  it("should make authorized HTTP GET requests", async () => {
+  it("should fetch users", async () => {
     await AWS.config.credentials.getPromise()
     // console.log(AWS.config.credentials.accessKeyId)
 
@@ -33,7 +33,7 @@ describe("HTTP assertions", function() {
       })
       .signRequest({
         method: "GET", // method,
-        path: "/notes", //path,
+        path: "/user", //path,
         headers: {}, // headers,
         queryParams: {}, // queryParams,
         body: {} // body
@@ -45,8 +45,10 @@ describe("HTTP assertions", function() {
 
     const res = await axios.get(signedRequest.url, { params: {}, headers })
 
-    // console.log(res)
     expect(res.status).to.equal(200)
-    expect(res.data.message).to.match(/Your function executed successfully/)
+    expect(res.headers["content-type"]).to.equal("application/json")
+
+    // console.log(JSON.stringify(res.data, null, 2))
+    expect(res.data.length).to.equal(2)
   })
 })
