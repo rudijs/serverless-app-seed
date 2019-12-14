@@ -4,8 +4,11 @@ const expect = chai.expect
 const AWS = require("aws-sdk")
 const sigV4Client = require("../lib/sigV4Client").sigV4Client
 const axios = require("axios")
+const userFilter = require("../lib/userFilter").userFilter
 
 describe("/User", function() {
+  let usersConfig
+
   it("should fetch all users", async () => {
     const signedRequest = sigV4Client
       .newClient({
@@ -30,10 +33,43 @@ describe("/User", function() {
     expect(res.status).to.equal(200)
     expect(res.headers["content-type"]).to.equal("application/json")
     expect(res.data.length).to.equal(2)
+
+    // get the username for use in the following tests
+    // usernames (uuid format) change when new cognito user pool infrastructure is recreated
+    usersConfig = userFilter(res.data)
+    // console.log(usersConfig)
   })
 
-  it("should fetch a single user", async () => {
-    const userName = "9e429c9e-53ea-4f16-8ea9-45cce22e38dc"
+  it("should fetch the Admin user", async () => {
+    const userName = usersConfig["admin@example.com"]
+
+    const signedRequest = sigV4Client
+      .newClient({
+        accessKey: AWS.config.credentials.accessKeyId,
+        secretKey: AWS.config.credentials.secretAccessKey,
+        sessionToken: AWS.config.credentials.sessionToken,
+        region: process.env.AWS_APP_COGNITO_REGION,
+        endpoint: process.env.REACT_APP_AWS_APP_SERVICE_ENDPOINT
+      })
+      .signRequest({
+        method: "GET",
+        path: `/user/${userName}`,
+        headers: {},
+        queryParams: {},
+        body: {}
+      })
+
+    const headers = signedRequest.headers
+
+    const res = await axios.get(signedRequest.url, { params: {}, headers })
+    // console.log(JSON.stringify(res.data, null, 2))
+    expect(res.status).to.equal(200)
+    expect(res.headers["content-type"]).to.equal("application/json")
+    expect(res.data.Username).to.equal(userName)
+  })
+
+  it("should fetch the User user", async () => {
+    const userName = usersConfig["user@example.com"]
 
     const signedRequest = sigV4Client
       .newClient({

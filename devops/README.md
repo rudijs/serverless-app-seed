@@ -29,6 +29,7 @@ Create Cognito User Pool and Identity Pool first
 Deploy the serverless API
 
 - `cd ../api`
+- `npm install`
 - `sls --stage dev deploy`
 - `cd ../devops`
 
@@ -46,6 +47,7 @@ Build and deploy the React App to S3 (and into the Cloudfront distribution)
 - TODO: put in AWS secrets REACT_APP_AWS_APP_GOOGLE_TRACKING_ID
 - `export AWS_APP_GOOGLE_TRACKING_ID=<ID>`
 - `source ./env-react.sh`
+- `cd ../client && npm install && cd ../devops`
 - `./deploy.sh`
 - The deploy script will output two URLs.
 - The S3 direct URL is immediately available, the DNS domain name will take a short while as the Cloudfront distributions takes time to initialize.
@@ -102,10 +104,22 @@ Build and deploy the React App to S3 (and into the Cloudfront distribution)
 
 ## Tests
 
-- Frontend Unit Tests using Jest
-- `cd client`
+API
+
+- `cd api`
+- Unit tests (local)
 - `npm test`
-- Integration (end to end) tests using Cypress
+- HTTP API tests (remote - the deployed serverless lambda functions)
+- `npm run test-api`
+
+Frontend Unit Tests using Jest
+
+- `cd client`
+- Unit tests (local)
+- `npm test`
+
+Integration (end to end) tests using Cypress
+
 - Local env
 - `npm start`
 - `npm run cypress:open`
