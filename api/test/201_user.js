@@ -6,23 +6,7 @@ const sigV4Client = require("../lib/sigV4Client").sigV4Client
 const axios = require("axios")
 
 describe("HTTP assertions", function() {
-  AWS.config.region = process.env.AWS_APP_COGNITO_REGION
-
-  const userToken = process.env.idToken
-
-  const authenticator = `cognito-idp.${process.env.AWS_APP_COGNITO_REGION}.amazonaws.com/${process.env.AWS_APP_COGNITO_USER_POOL_ID}`
-
-  AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: process.env.REACT_APP_AWS_APP_COGNITO_IDENTITY_POOL_ID,
-    Logins: {
-      [authenticator]: userToken
-    }
-  })
-
   it("should fetch users", async () => {
-    await AWS.config.credentials.getPromise()
-    // console.log(AWS.config.credentials.accessKeyId)
-
     const signedRequest = sigV4Client
       .newClient({
         accessKey: AWS.config.credentials.accessKeyId,
