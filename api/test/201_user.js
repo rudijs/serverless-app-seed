@@ -5,8 +5,8 @@ const AWS = require("aws-sdk")
 const sigV4Client = require("../lib/sigV4Client").sigV4Client
 const axios = require("axios")
 
-describe("HTTP assertions", function() {
-  it("should fetch users", async () => {
+describe("/User", function() {
+  it("should fetch all users", async () => {
     const signedRequest = sigV4Client
       .newClient({
         accessKey: AWS.config.credentials.accessKeyId,

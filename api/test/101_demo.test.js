@@ -5,7 +5,7 @@ const AWS = require("aws-sdk")
 const sigV4Client = require("../lib/sigV4Client").sigV4Client
 const axios = require("axios")
 
-describe("HTTP assertions", function() {
+describe("Smoke Tests", function() {
   it("should make authorized HTTP GET requests", async () => {
     const signedRequest = sigV4Client
       .newClient({

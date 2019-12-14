@@ -1,8 +1,8 @@
 const AWS = require("aws-sdk")
 AWS.config.region = process.env.AWS_APP_COGNITO_REGION
 
-describe("Set up global variables", () => {
-  it("should", async () => {
+describe("Set Global Variables", () => {
+  it("should sign in to AWS and configure credentials", async () => {
     const cognito = new AWS.CognitoIdentityServiceProvider()
 
     let params = {
