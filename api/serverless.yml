@@ -35,11 +35,16 @@ functions:
           cors: true
           authorizer: aws_iam
 
-  users:
-    handler: functions/users.main
+  user:
+    handler: functions/user.main
     events:
       - http:
-          path: user
+          path: user/{userName} # single user
+          method: get
+          cors: true
+          authorizer: aws_iam
+      - http:
+          path: user # all users
           method: get
           cors: true
           authorizer: aws_iam
@@ -47,7 +52,7 @@ functions:
       - Effect: Allow
         Action:
           - cognito-idp:ListUsers
-        # Resource: "arn:aws:cognito-idp:${self:provider.region}:#{AWS::AccountId}:*"
+          - cognito-idp:AdminGetUser
         Resource: "arn:aws:cognito-idp:${self:provider.region}:#{AWS::AccountId}:userpool/${self:custom.cognito.userPoolId}"
 
 # Create our resources with separate CloudFormation templates
