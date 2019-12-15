@@ -13,7 +13,7 @@ describe("Smoke Tests", function() {
         secretKey: AWS.config.credentials.secretAccessKey,
         sessionToken: AWS.config.credentials.sessionToken,
         region: process.env.AWS_APP_COGNITO_REGION,
-        endpoint: process.env.REACT_APP_AWS_APP_SERVICE_ENDPOINT
+        endpoint: process.env.AWS_APP_SERVICE_ENDPOINT
       })
       .signRequest({
         method: "GET", // method,
