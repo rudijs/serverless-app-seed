@@ -5,12 +5,12 @@ describe('The Sign Page', function() {
     const password = Cypress.env('adminPassword')
 
     cy.visit('/')
-
-    cy.get('.MuiToolbar-root > .MuiButton-root > .MuiButton-label').click()
-
-    cy.get('input[name=email]').type(email)
-
-    cy.get('input[name=password]').type(`${password}{enter}`)
+      .get('.MuiToolbar-root > .MuiButton-root > .MuiButton-label')
+      .click()
+      .get('input[name=email]')
+      .type(email)
+      .get('input[name=password]')
+      .type(`${password}{enter}`)
 
     cy.url().should('include', '/dashboard')
 

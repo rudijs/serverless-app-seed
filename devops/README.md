@@ -38,6 +38,8 @@ Update the Cognito IAM role to allow access to our API(s)
 - `source ./env-serverless.sh`
 - `aws cloudformation update-stack --stack-name app-seed-cognito-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=ApiOne,ParameterValue=$AWS_APP_API_ONE`
 
+At this point you can run the API endpoint tests (see below), or continue to setup the frontend application then test after that.
+
 Create the frontend infrastructure (S3 Bucket, CloudFront distribution, Route53 DNS)
 
 - `aws cloudformation create-stack --stack-name app-seed-client-dev --template-body file://static-site-stack.yaml --parameters ParameterKey=AcmCertificateArn,ParameterValue=$AWS_APP_ACMCERTIFICATEARN`
@@ -125,3 +127,6 @@ Integration (end to end) tests using Cypress
 - `npm run cypress:open`
 - Dev env on AWS
 - `STAGE=dev npm run cypress:open`
+- Viewport will default to mobile (responsive) size 900 x 400
+- Set the viewport to desktop with the BREAKPOINT env var. Example:
+- `STAGE=dev BREAKPOINT=desktop npm run cypress:open`
