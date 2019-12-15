@@ -8,6 +8,7 @@ const userFilter = require("../lib/userFilter").userFilter
 
 describe("/User", function() {
   let usersConfig
+
   const client = sigV4Client.newClient({
     accessKey: AWS.config.credentials.accessKeyId,
     secretKey: AWS.config.credentials.secretAccessKey,
@@ -26,7 +27,6 @@ describe("/User", function() {
     })
 
     const headers = signedRequest.headers
-    // console.log(signedRequest.url)
 
     const res = await axios.get(signedRequest.url, { params: {}, headers })
     // console.log(JSON.stringify(res.data, null, 2))
