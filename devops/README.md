@@ -50,7 +50,7 @@ Build and deploy the React App to S3 (and into the Cloudfront distribution)
 - `export AWS_APP_GOOGLE_TRACKING_ID=<ID>`
 - `source ./env-react.sh`
 - `cd ../client && npm install && cd ../devops`
-- `./deploy.sh`
+- `./deploy-frontend.sh`
 - The deploy script will output two URLs.
 - The S3 direct URL is immediately available, the DNS domain name will take a short while as the Cloudfront distributions takes time to initialize.
 
@@ -76,7 +76,7 @@ Build and deploy the React App to S3 (and into the Cloudfront distribution)
 - `aws cloudformation update-stack --stack-name app-seed-cognito-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=ApiOne,ParameterValue=$AWS_APP_API_ONE`
 - Re-deploy the React frontend app, it will also need to use new API URL endpoint
 - `source ./env-react.sh`
-- `./deploy.sh`
+- `./deploy-frontend.sh`
 
 ## Remove and Create again the serverless S3 hosted Cloudfront ReactJS app
 
@@ -90,7 +90,7 @@ Build and deploy the React App to S3 (and into the Cloudfront distribution)
 - `aws cloudformation create-stack --stack-name app-seed-client-dev --template-body file://static-site-stack.yaml --parameters ParameterKey=AcmCertificateArn,ParameterValue=$AWS_APP_ACMCERTIFICATEARN`
 - Build and deploy the React App to S3 (and into the Cloudfront distribution)
 - `source ./react-app-env.sh`
-- `./deploy.sh`
+- `./deploy-frontend.sh`
 
 ## Regular Frontend deployment
 
