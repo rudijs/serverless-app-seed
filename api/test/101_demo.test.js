@@ -27,10 +27,18 @@ describe("Smoke Tests", function() {
     // console.log(signedRequest.headers)
     // console.log(signedRequest.url)
 
-    const res = await axios.get(signedRequest.url, { params: {}, headers })
+    try {
+      const res = await axios.get(signedRequest.url, { params: {}, headers })
 
-    // console.log(res)
-    expect(res.status).to.equal(200)
-    expect(res.data.message).to.match(/Your function executed successfully/)
+      // console.log(res)
+      expect(res.status).to.equal(200)
+      expect(res.data.message).to.match(/Your function executed successfully/)
+    } catch (e) {
+      console.log("Status:", e.response.status)
+      console.log("Headers:", JSON.stringify(e.response.headers, null, 2))
+      console.log("Config:", JSON.stringify(e.response.config, null, 2))
+      console.log("Data:", JSON.stringify(e.response.data, null, 2))
+      throw e.response.data.message
+    }
   })
 })

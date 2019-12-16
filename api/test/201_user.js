@@ -31,6 +31,7 @@ describe("/User", function() {
     try {
       const res = await axios.get(signedRequest.url, { params: {}, headers })
       // console.log(JSON.stringify(res.data, null, 2))
+
       expect(res.status).to.equal(200)
       expect(res.headers["content-type"]).to.equal("application/json")
       expect(res.data.length).to.equal(2)
@@ -40,7 +41,11 @@ describe("/User", function() {
       usersConfig = userFilter(res.data)
       // console.log(usersConfig)
     } catch (e) {
-      console.log(e.message)
+      console.log("Status:", e.response.status)
+      console.log("Headers:", JSON.stringify(e.response.headers, null, 2))
+      console.log("Config:", JSON.stringify(e.response.config, null, 2))
+      console.log("Data:", JSON.stringify(e.response.data, null, 2))
+      throw e.response.data.message
     }
   })
 
@@ -56,11 +61,19 @@ describe("/User", function() {
     })
     const headers = signedRequest.headers
 
-    const res = await axios.get(signedRequest.url, { params: {}, headers })
-    // console.log(JSON.stringify(res.data, null, 2))
-    expect(res.status).to.equal(200)
-    expect(res.headers["content-type"]).to.equal("application/json")
-    expect(res.data.Username).to.equal(userName)
+    try {
+      const res = await axios.get(signedRequest.url, { params: {}, headers })
+      // console.log(JSON.stringify(res.data, null, 2))
+      expect(res.status).to.equal(200)
+      expect(res.headers["content-type"]).to.equal("application/json")
+      expect(res.data.Username).to.equal(userName)
+    } catch (e) {
+      console.log("Status:", e.response.status)
+      console.log("Headers:", JSON.stringify(e.response.headers, null, 2))
+      console.log("Config:", JSON.stringify(e.response.config, null, 2))
+      console.log("Data:", JSON.stringify(e.response.data, null, 2))
+      throw e.response.data.message
+    }
   })
 
   it("should fetch the User user", async () => {
@@ -76,10 +89,18 @@ describe("/User", function() {
 
     const headers = signedRequest.headers
 
-    const res = await axios.get(signedRequest.url, { params: {}, headers })
-    // console.log(JSON.stringify(res.data, null, 2))
-    expect(res.status).to.equal(200)
-    expect(res.headers["content-type"]).to.equal("application/json")
-    expect(res.data.Username).to.equal(userName)
+    try {
+      const res = await axios.get(signedRequest.url, { params: {}, headers })
+      // console.log(JSON.stringify(res.data, null, 2))
+      expect(res.status).to.equal(200)
+      expect(res.headers["content-type"]).to.equal("application/json")
+      expect(res.data.Username).to.equal(userName)
+    } catch (e) {
+      console.log("Status:", e.response.status)
+      console.log("Headers:", JSON.stringify(e.response.headers, null, 2))
+      console.log("Config:", JSON.stringify(e.response.config, null, 2))
+      console.log("Data:", JSON.stringify(e.response.data, null, 2))
+      throw e.response.data.message
+    }
   })
 })

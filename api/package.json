@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest lib",
-    "test-api": "mocha"
+    "test-api": "mocha --bail"
   },
   "keywords": [],
   "author": "",
