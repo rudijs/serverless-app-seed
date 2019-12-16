@@ -72,9 +72,10 @@ Build and deploy the React App to S3 (and into the Cloudfront distribution)
 - We now have a new API URL endpoint and new API Gateway ID
 - Update the Cognito Identity Pool Auth Role to use the new API Gateway ID
 - `cd ../devops`
-- `source ./react-app-env.sh`
-- `aws cloudformation update-stack --stack-name app-seed-cognito-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=ApiOne,ParameterValue=$AWS_RJS_API_ONE`
-- Redeploy the React frontend app, it will also need to use new API URL endpoint
+- `source ./env-serverless.sh`
+- `aws cloudformation update-stack --stack-name app-seed-cognito-dev --template-body file://cognito-stack.yaml --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=ApiOne,ParameterValue=$AWS_APP_API_ONE`
+- Re-deploy the React frontend app, it will also need to use new API URL endpoint
+- `source ./env-react.sh`
 - `./deploy.sh`
 
 ## Remove and Create again the serverless S3 hosted Cloudfront ReactJS app
@@ -86,7 +87,7 @@ Build and deploy the React App to S3 (and into the Cloudfront distribution)
 - Set some shell environment variable used for creating cloudfront distribution
 - `source ./app-env.sh`
 - Create the frontend infrastructure (S3 Bucket, CloudFront distribution, Route53 DNS)
-- `aws cloudformation create-stack --stack-name app-seed-client-dev --template-body file://static-site-stack.yaml --parameters ParameterKey=AcmCertificateArn,ParameterValue=$AWS_RJS_ACMCERTIFICATEARN`
+- `aws cloudformation create-stack --stack-name app-seed-client-dev --template-body file://static-site-stack.yaml --parameters ParameterKey=AcmCertificateArn,ParameterValue=$AWS_APP_ACMCERTIFICATEARN`
 - Build and deploy the React App to S3 (and into the Cloudfront distribution)
 - `source ./react-app-env.sh`
 - `./deploy.sh`
