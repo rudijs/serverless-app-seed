@@ -45,7 +45,7 @@ const SignInPage = inject('state')(
   observer(({state, history}) => {
     const classes = useStyles()
     const [authError, setAuthError] = useState(null)
-    const inputEl = React.useRef(null)
+    // const inputEl = React.useRef(null)
 
     const authErrorDelete = () => {
       setAuthError('')
@@ -67,6 +67,7 @@ const SignInPage = inject('state')(
             })}
             onSubmit={async (values, {setSubmitting, resetForm}) => {
               // alert(JSON.stringify(values, null, 2));
+              setAuthError(null)
 
               const {email, password} = values
 
@@ -97,7 +98,7 @@ const SignInPage = inject('state')(
                 // alert(e.message)
                 setAuthError(e.message)
                 // simple current.focus() did not work, had to querySelect the input elemet (material-ui specific I think)
-                inputEl.current.querySelector('input').focus()
+                // inputEl.current.querySelector('input').focus()
                 resetForm()
                 setSubmitting(false)
               }
@@ -124,8 +125,8 @@ const SignInPage = inject('state')(
                     type="email"
                     className={classes.formInput}
                     name="email"
-                    autoFocus
-                    innerRef={inputEl}
+                    // autoFocus
+                    // innerRef={inputEl}
                     as={TextField}
                     label="Email Address"
                     helperText={touched.email ? errors.email : ''}

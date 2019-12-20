@@ -11,7 +11,7 @@ import {
   Typography,
   Button,
   IconButton,
-  Drawer,
+  SwipeableDrawer,
   List,
   ListItem,
   ListItemIcon,
@@ -54,6 +54,7 @@ const NavBar = inject('state')(
 
     const toggleDrawer = () => event => {
       if (
+        event &&
         event.type === 'keydown' &&
         (event.key === 'Tab' || event.key === 'Shift')
       ) {
@@ -169,9 +170,13 @@ const NavBar = inject('state')(
             )}
           </Toolbar>
         </AppBar>
-        <Drawer open={open} onClose={toggleDrawer()}>
+        <SwipeableDrawer
+          open={open}
+          onOpen={toggleDrawer()}
+          onClose={toggleDrawer()}
+        >
           {sideList('left')}
-        </Drawer>
+        </SwipeableDrawer>
       </div>
     )
   }),
