@@ -14,11 +14,11 @@ custom:
     automatic: true
     number:
   cognito:
-    userPoolId: ${env:AWS_APP_COGNITO_USER_POOL_ID, 'unset-user-pool'}
+    userPoolId: ${env:AWS_APP_COGNITO_USER_POOL_ID, 'unset-cognito-user-pool-id'}
 
 provider:
   name: aws
-  runtime: nodejs10.x
+  runtime: nodejs12.x
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'ap-southeast-1'}
   environment:

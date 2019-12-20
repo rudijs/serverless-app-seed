@@ -5,6 +5,8 @@ describe("Before All Set Global Variables", () => {
   it("should sign in to AWS and configure credentials", async () => {
     const cognito = new AWS.CognitoIdentityServiceProvider()
 
+    // todo: check for reqired env vars
+
     let params = {
       AuthFlow: "ADMIN_NO_SRP_AUTH",
       ClientId: process.env.AWS_APP_COGNITO_APP_CLIENT_ID,

@@ -9,6 +9,11 @@ There are two main variations on setting up the cloud infrastructure:
 
 We'll list the steps for the two types here.
 
+## Requirements
+
+1. AWS CLI
+2. NodeJS
+
 ## Create everything from scratch (new environment)
 
 Prerequisite: Domain name set up with TLS certificate.

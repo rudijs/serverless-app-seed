@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest lib",
-    "test-api": "mocha --bail"
+    "test-api": "mocha --bail --timeout 5000"
   },
   "keywords": [],
   "author": "",

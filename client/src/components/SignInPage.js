@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {inject, observer} from 'mobx-react'
 
 import {Formik, Field, Form} from 'formik'
@@ -12,6 +12,7 @@ import {Typography} from '@material-ui/core'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import Chip from '@material-ui/core/Chip'
 
 // todo: redirect if already signed in
 
@@ -33,11 +34,22 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     marginTop: theme.spacing(4),
   },
+  authError: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '1rem',
+  },
 }))
 
 const SignInPage = inject('state')(
   observer(({state, history}) => {
     const classes = useStyles()
+    const [authError, setAuthError] = useState(null)
+    const inputEl = React.useRef(null)
+
+    const authErrorDelete = () => {
+      setAuthError('')
+    }
 
     return (
       <Box className={classes.container} mx="auto">
@@ -53,7 +65,7 @@ const SignInPage = inject('state')(
                 .email('Invalid email address')
                 .required('Required'),
             })}
-            onSubmit={async (values, {setSubmitting}) => {
+            onSubmit={async (values, {setSubmitting, resetForm}) => {
               // alert(JSON.stringify(values, null, 2));
 
               const {email, password} = values
@@ -81,8 +93,12 @@ const SignInPage = inject('state')(
 
                 history.push('/dashboard')
               } catch (e) {
-                console.log(901, e)
-                alert(e.message)
+                console.log(e)
+                // alert(e.message)
+                setAuthError(e.message)
+                // simple current.focus() did not work, had to querySelect the input elemet (material-ui specific I think)
+                inputEl.current.querySelector('input').focus()
+                resetForm()
                 setSubmitting(false)
               }
             }}
@@ -92,10 +108,24 @@ const SignInPage = inject('state')(
                 <Form>
                   <Typography variant="h3">Sign In</Typography>
 
+                  {authError ? (
+                    <Box className={classes.authError}>
+                      <Chip
+                        label={authError}
+                        color="secondary"
+                        onDelete={authErrorDelete}
+                      />
+                    </Box>
+                  ) : (
+                    ''
+                  )}
+
                   <Field
                     type="email"
                     className={classes.formInput}
                     name="email"
+                    autoFocus
+                    innerRef={inputEl}
                     as={TextField}
                     label="Email Address"
                     helperText={touched.email ? errors.email : ''}
