@@ -16,10 +16,15 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Collapse,
 } from '@material-ui/core'
 
 import StarIcon from '@material-ui/icons/Star'
 import MenuIcon from '@material-ui/icons/Menu'
+import ExpandLess from '@material-ui/icons/ExpandLess'
+import ExpandMore from '@material-ui/icons/ExpandMore'
+import StarBorder from '@material-ui/icons/StarBorder'
+import InboxIcon from '@material-ui/icons/MoveToInbox'
 
 const useStyles = makeStyles(theme => ({
   // '@global': {
@@ -43,6 +48,9 @@ const useStyles = makeStyles(theme => ({
       color: '#FFF',
     },
   },
+  nested: {
+    paddingLeft: theme.spacing(4),
+  },
 }))
 
 // export default function ButtonAppBar() {
@@ -52,7 +60,9 @@ const NavBar = inject('state')(
 
     const [open, setOpen] = React.useState(false)
 
-    const toggleDrawer = () => event => {
+    const [subOpen, setSubOpen] = React.useState(true)
+
+    const toggleDrawer = event => {
       if (
         event &&
         event.type === 'keydown' &&
@@ -64,12 +74,16 @@ const NavBar = inject('state')(
       setOpen(!open)
     }
 
+    const handleClick = () => {
+      setSubOpen(!subOpen)
+    }
+
     const sideList = side => (
       <div
         className={classes.list}
         role="presentation"
-        onClick={toggleDrawer(side, false)}
-        onKeyDown={toggleDrawer(side, false)}
+        // onClick={toggleDrawer}
+        // onKeyDown={toggleDrawer}
       >
         <List component="nav">
           {!state.isAuthenticated ? (
@@ -90,8 +104,9 @@ const NavBar = inject('state')(
               <ListItem
                 button
                 selected={location.pathname === '/dashboard'}
-                onClick={() => {
+                onClick={e => {
                   history.push('/dashboard')
+                  toggleDrawer(e)
                 }}
               >
                 <ListItemIcon>
@@ -103,8 +118,9 @@ const NavBar = inject('state')(
               <ListItem
                 button
                 selected={location.pathname === '/profile'}
-                onClick={() => {
+                onClick={e => {
                   history.push('/profile')
+                  toggleDrawer(e)
                 }}
               >
                 <ListItemIcon>
@@ -114,6 +130,31 @@ const NavBar = inject('state')(
               </ListItem>
             </>
           )}
+
+          <ListItem button onClick={handleClick}>
+            <ListItemIcon>
+              <InboxIcon />
+            </ListItemIcon>
+            <ListItemText primary="Settings" />
+            {subOpen ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={subOpen} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                className={classes.nested}
+                onClick={e => {
+                  history.push('/dashboard')
+                  toggleDrawer(e)
+                }}
+              >
+                <ListItemIcon>
+                  <StarBorder />
+                </ListItemIcon>
+                <ListItemText primary="Starred" />
+              </ListItem>
+            </List>
+          </Collapse>
         </List>
       </div>
     )
@@ -127,7 +168,7 @@ const NavBar = inject('state')(
               className={classes.menuButton}
               color="inherit"
               aria-label="menu"
-              onClick={toggleDrawer()}
+              onClick={toggleDrawer}
             >
               <MenuIcon />
             </IconButton>
@@ -172,10 +213,10 @@ const NavBar = inject('state')(
         </AppBar>
         <SwipeableDrawer
           open={open}
-          onOpen={toggleDrawer()}
-          onClose={toggleDrawer()}
+          onOpen={toggleDrawer}
+          onClose={toggleDrawer}
         >
-          {sideList('left')}
+          {sideList()}
         </SwipeableDrawer>
       </div>
     )
