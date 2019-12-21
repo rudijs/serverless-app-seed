@@ -3,6 +3,7 @@ import {withRouter} from 'react-router-dom'
 import {inject, observer} from 'mobx-react'
 import {Link} from 'react-router-dom'
 import {Auth} from 'aws-amplify'
+import Can from '../Can'
 
 import {makeStyles} from '@material-ui/core/styles'
 import {
@@ -18,13 +19,16 @@ import {
   ListItemText,
   Collapse,
 } from '@material-ui/core'
-
-import StarIcon from '@material-ui/icons/Star'
-import MenuIcon from '@material-ui/icons/Menu'
-import ExpandLess from '@material-ui/icons/ExpandLess'
-import ExpandMore from '@material-ui/icons/ExpandMore'
-import StarBorder from '@material-ui/icons/StarBorder'
-import InboxIcon from '@material-ui/icons/MoveToInbox'
+import {
+  Menu,
+  Dashboard,
+  AccountCircle,
+  Group,
+  Settings,
+  Star,
+  ExpandLess,
+  ExpandMore,
+} from '@material-ui/icons'
 
 const useStyles = makeStyles(theme => ({
   // '@global': {
@@ -90,12 +94,13 @@ const NavBar = inject('state')(
             <ListItem
               button
               selected={location.pathname === '/signin'}
-              onClick={() => {
+              onClick={e => {
                 history.push('/signin')
+                toggleDrawer(e)
               }}
             >
               <ListItemIcon>
-                <StarIcon />
+                <Star />
               </ListItemIcon>
               <ListItemText primary="Sign In" />
             </ListItem>
@@ -110,7 +115,7 @@ const NavBar = inject('state')(
                 }}
               >
                 <ListItemIcon>
-                  <StarIcon />
+                  <Dashboard />
                 </ListItemIcon>
                 <ListItemText primary="Dashboard" />
               </ListItem>
@@ -124,37 +129,45 @@ const NavBar = inject('state')(
                 }}
               >
                 <ListItemIcon>
-                  <StarIcon />
+                  <AccountCircle />
                 </ListItemIcon>
                 <ListItemText primary="Profile" />
               </ListItem>
             </>
           )}
 
-          <ListItem button onClick={handleClick}>
-            <ListItemIcon>
-              <InboxIcon />
-            </ListItemIcon>
-            <ListItemText primary="Settings" />
-            {subOpen ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
-          <Collapse in={subOpen} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItem
-                button
-                className={classes.nested}
-                onClick={e => {
-                  history.push('/dashboard')
-                  toggleDrawer(e)
-                }}
-              >
-                <ListItemIcon>
-                  <StarBorder />
-                </ListItemIcon>
-                <ListItemText primary="Starred" />
-              </ListItem>
-            </List>
-          </Collapse>
+          <Can
+            role={state.groups}
+            perform="dashboard-page:visit"
+            yes={() => (
+              <React.Fragment>
+                <ListItem button onClick={handleClick}>
+                  <ListItemIcon>
+                    <Settings />
+                  </ListItemIcon>
+                  <ListItemText primary="Settings" />
+                  {subOpen ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+                <Collapse in={subOpen} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    <ListItem
+                      button
+                      className={classes.nested}
+                      onClick={e => {
+                        history.push('/dashboard')
+                        toggleDrawer(e)
+                      }}
+                    >
+                      <ListItemIcon>
+                        <Group />
+                      </ListItemIcon>
+                      <ListItemText primary="Users" />
+                    </ListItem>
+                  </List>
+                </Collapse>
+              </React.Fragment>
+            )}
+          />
         </List>
       </div>
     )
@@ -170,7 +183,7 @@ const NavBar = inject('state')(
               aria-label="menu"
               onClick={toggleDrawer}
             >
-              <MenuIcon />
+              <Menu />
             </IconButton>
             <Typography
               variant="h6"
