@@ -154,7 +154,7 @@ const NavBar = inject('state')(
                       button
                       className={classes.nested}
                       onClick={e => {
-                        history.push('/dashboard')
+                        history.push('/profile')
                         toggleDrawer(e)
                       }}
                     >

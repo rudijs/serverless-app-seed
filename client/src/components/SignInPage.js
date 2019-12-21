@@ -94,7 +94,7 @@ const SignInPage = inject('state')(
 
                 history.push('/dashboard')
               } catch (e) {
-                console.log(e)
+                // console.log(e)
                 // alert(e.message)
                 setAuthError(e.message)
                 // simple current.focus() did not work, had to querySelect the input elemet (material-ui specific I think)
