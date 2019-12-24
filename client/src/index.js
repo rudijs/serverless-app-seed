@@ -10,6 +10,7 @@ import {CssBaseline} from '@material-ui/core'
 import App from './App'
 import {Provider} from 'mobx-react'
 import {state} from './models/clientState'
+import './index.css'
 
 import Amplify, {Auth, Logger} from 'aws-amplify'
 import config from './config'

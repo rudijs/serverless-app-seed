@@ -27,6 +27,10 @@ const useStyles = makeStyles(theme => ({
   paper: {
     marginTop: theme.spacing(2),
     padding: theme.spacing(2),
+    animation: 'fadein 1s',
+    '-moz-animation': 'fadein 1s' /* Firefox */,
+    '-webkit-animation': 'fadein 1s' /* Safari and Chrome */,
+    '-o-animation': 'fadein 1s' /* Opera */,
   },
   progresStyle: {
     marginLeft: '1rem',
@@ -107,6 +111,7 @@ const SignInPage = inject('state')(
             }}
           >
             {({isSubmitting, errors, touched}) => {
+              // animation cicular spinner
               if (loadingEl.current) {
                 isSubmitting
                   ? (loadingEl.current.dataset.state = 'loading')
@@ -164,10 +169,7 @@ const SignInPage = inject('state')(
                       {isSubmitting ? (
                         <>
                           Submitting...
-                          <CircularProgress
-                            size="1rem"
-                            className={classes.progresStyle}
-                          />
+                          {/* <CircularProgress size="1rem" className={classes.progresStyle} /> */}
                         </>
                       ) : (
                         'Sign In'
@@ -184,7 +186,7 @@ const SignInPage = inject('state')(
                         data-state="idle"
                         size="3rem"
                         innerRef={loadingEl}
-                        color="secondary"
+                        color="primary"
                       />
                     </Box>
                   </div>
