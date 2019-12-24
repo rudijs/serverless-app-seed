@@ -1,12 +1,14 @@
 exports.main = async (event, context) => {
+  // eslint-disable-next-line no-console
+  console.log(context)
   const headers = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Credentials": true
-  };
+  }
 
   const result = {
     headers
-  };
+  }
 
   // const authProvider = event.requestContext.identity.cognitoAuthenticationProvider;
   // // Cognito authentication provider looks like:
@@ -19,10 +21,10 @@ exports.main = async (event, context) => {
   // const userPoolId = userPoolIdParts[userPoolIdParts.length - 1];
   // const userPoolUserId = parts[parts.length - 1];
 
-  result.statusCode = 200;
+  result.statusCode = 200
   // result.body = JSON.stringify({ event, idp: { userPoolId, userPoolUserId } });
   // result.body = JSON.stringify({ event, context });
-  result.body = JSON.stringify({ message: "Go Serverless v1.0! Your function executed successfully!" });
+  result.body = JSON.stringify({ message: "Go Serverless v1.0! Your function executed successfully!" })
 
-  return result;
-};
+  return result
+}

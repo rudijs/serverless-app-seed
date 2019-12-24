@@ -3,7 +3,7 @@ import { success, failure } from "../lib/response"
 
 exports.main = async (event, context) => {
   // eslint-disable-next-line no-console
-  // console.log(JSON.stringify(event))
+  console.log(JSON.stringify(event))
   // eslint-disable-next-line no-console
   // console.log(event.pathParameters)
 

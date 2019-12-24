@@ -1,0 +1,7 @@
+[data-state='idle'] {
+  visibility: hidden;
+}
+
+[data-state='loading'] {
+  visibility: visible;
+}

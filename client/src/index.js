@@ -11,8 +11,16 @@ import App from './App'
 import {Provider} from 'mobx-react'
 import {state} from './models/clientState'
 
-import Amplify, {Auth} from 'aws-amplify'
+import Amplify, {Auth, Logger} from 'aws-amplify'
 import config from './config'
+
+Amplify.Logger.LOG_LEVEL = 'DEBUG'
+const logger = new Logger('foo', 'VERBOSE')
+
+logger.info('info bar')
+logger.debug('debug bar')
+logger.warn('warn bar')
+logger.error('error bar')
 
 Amplify.configure({
   Auth: {

@@ -14,6 +14,8 @@ import Button from '@material-ui/core/Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Chip from '@material-ui/core/Chip'
 
+import './SignInPage.css'
+
 // todo: redirect if already signed in
 
 const useStyles = makeStyles(theme => ({
@@ -45,7 +47,7 @@ const SignInPage = inject('state')(
   observer(({state, history}) => {
     const classes = useStyles()
     const [authError, setAuthError] = useState(null)
-    // const inputEl = React.useRef(null)
+    const loadingEl = React.useRef(null)
 
     const authErrorDelete = () => {
       setAuthError('')
@@ -105,6 +107,12 @@ const SignInPage = inject('state')(
             }}
           >
             {({isSubmitting, errors, touched}) => {
+              if (loadingEl.current) {
+                isSubmitting
+                  ? (loadingEl.current.dataset.state = 'loading')
+                  : (loadingEl.current.dataset.state = 'idle')
+              }
+
               return (
                 <Form>
                   <Typography variant="h3">Sign In</Typography>
@@ -153,14 +161,32 @@ const SignInPage = inject('state')(
                       disabled={isSubmitting}
                       type="submit"
                     >
-                      Sign In
-                      {isSubmitting && (
-                        <CircularProgress
-                          size="1rem"
-                          className={classes.progresStyle}
-                        />
+                      {isSubmitting ? (
+                        <>
+                          Submitting...
+                          <CircularProgress
+                            size="1rem"
+                            className={classes.progresStyle}
+                          />
+                        </>
+                      ) : (
+                        'Sign In'
                       )}
                     </Button>
+                    <Box
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'Center',
+                        marginTop: '2rem',
+                      }}
+                    >
+                      <CircularProgress
+                        data-state="idle"
+                        size="3rem"
+                        innerRef={loadingEl}
+                        color="secondary"
+                      />
+                    </Box>
                   </div>
                 </Form>
               )
