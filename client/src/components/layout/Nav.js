@@ -31,11 +31,11 @@ import {
 } from '@material-ui/icons'
 
 const useStyles = makeStyles(theme => ({
-  // '@global': {
-  //   margin: 0,
-  // },
-  root: {
-    flexGrow: 1,
+  toolBar: {
+    [theme.breakpoints.up('lg')]: {
+      width: '75%',
+      margin: '0 auto',
+    },
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -57,7 +57,6 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-// export default function ButtonAppBar() {
 const NavBar = inject('state')(
   observer(({state, history, location}) => {
     const classes = useStyles()
@@ -173,9 +172,9 @@ const NavBar = inject('state')(
     )
 
     return (
-      <div className={classes.root}>
+      <>
         <AppBar position="static" style={{margin: 0}}>
-          <Toolbar>
+          <Toolbar className={classes.toolBar}>
             <IconButton
               edge="start"
               className={classes.menuButton}
@@ -231,7 +230,7 @@ const NavBar = inject('state')(
         >
           {sideList()}
         </SwipeableDrawer>
-      </div>
+      </>
     )
   }),
 )
