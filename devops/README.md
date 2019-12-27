@@ -63,6 +63,7 @@ Build and deploy the React App to S3 (and into the Cloudfront distribution)
 
 - Frontend
 - `aws s3 rm s3://dev-app.rudijs.com --recursive`
+- `aws s3 rm s3://dev-app.rudijs.com.cloudfront-logs --recursive`
 - `aws cloudformation delete-stack --stack-name app-seed-client-dev`
 - `aws cloudformation delete-stack --stack-name app-seed-cognito-dev`
 - API

@@ -112,6 +112,9 @@ Resources:
         ViewerCertificate:
           AcmCertificateArn: !Ref AcmCertificateArn
           SslSupportMethod: sni-only
+        Logging:
+          Bucket: !GetAtt [CloudFrontLogsBucket, DomainName]
+          IncludeCookies: false
 
   StaticSiteDomainName:
     Type: AWS::Route53::RecordSet
@@ -126,6 +129,14 @@ Resources:
         DNSName: !GetAtt [StaticSiteCDN, DomainName]
         # CloudFront distribution Specify Z2FDTNDATAQYW2 for the HostedZoneId
         HostedZoneId: Z2FDTNDATAQYW2
+
+  CloudFrontLogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !If
+        - IsProduction
+        - !Join [".", [!Ref SubDomain, !Ref DomainName, "cloudfront-logs"]]
+        - !Join ["-", [!Ref Environment, !Join [".", [!Ref SubDomain, !Ref DomainName, "cloudfront-logs"]]]]
 
 Outputs:
   StaticSiteBucketName:
