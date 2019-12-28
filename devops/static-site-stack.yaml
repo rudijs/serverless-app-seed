@@ -114,6 +114,7 @@ Resources:
           SslSupportMethod: sni-only
         Logging:
           Bucket: !GetAtt [CloudFrontLogsBucket, DomainName]
+          Prefix: cloudfront-logs/
           IncludeCookies: false
 
   StaticSiteDomainName:
@@ -135,8 +136,8 @@ Resources:
     Properties:
       BucketName: !If
         - IsProduction
-        - !Join [".", [!Ref SubDomain, !Ref DomainName, "cloudfront-logs"]]
-        - !Join ["-", [!Ref Environment, !Join [".", [!Ref SubDomain, !Ref DomainName, "cloudfront-logs"]]]]
+        - !Join [".", [!Ref SubDomain, !Ref DomainName, "analytics"]]
+        - !Join ["-", [!Ref Environment, !Join [".", [!Ref SubDomain, !Ref DomainName, "analytics"]]]]
 
 Outputs:
   StaticSiteBucketName:
