@@ -1,0 +1,449 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+  Creates a VPC with Managed NAT
+
+  Usage examples
+
+  * Create dev environment
+  aws cloudformation create-stack --stack-name app-seed-vpc-dev --template-body file://vpc-stack.yaml
+
+Parameters:
+  VPCName:
+    Description: The name of the VPC being created.
+    Type: String
+    Default: "seed-app-vpc"
+
+  Environment:
+    Description: The VPC Environment to use
+    Type: String
+    Default: dev
+    AllowedValues: ["dev", "staging", "production"]
+    ConstraintDescription: Must be dev, staging or production.
+
+  SSHLocation:
+    Description: Lockdown SSH access to the bastion host (default can be accessed
+      from anywhere)
+    Type: String
+    MinLength: "9"
+    MaxLength: "18"
+    Default: 0.0.0.0/0
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
+
+  # HTTPLocation:
+  #   Description: Lockdown SSH access to the bastion host (default can be accessed
+  #     from anywhere)
+  #   Type: String
+  #   MinLength: "9"
+  #   MaxLength: "18"
+  #   Default: 0.0.0.0/0
+  #   AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+  #   ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
+
+Conditions:
+  IsProduction: !Equals [!Ref Environment, "production"]
+
+Mappings:
+  SubnetConfig:
+    VPC:
+      CIDR: "10.0.0.0/16"
+    Public0:
+      CIDR: "10.0.0.0/24"
+    Public1:
+      CIDR: "10.0.1.0/24"
+    Private0:
+      CIDR: "10.0.2.0/24"
+    Private1:
+      CIDR: "10.0.3.0/24"
+
+  # This mapping accounts for the scenario when certain AZs
+  # are not available to use (this differs on a per account
+  # per customer basis). E.g., if the 'b' AZ is not available
+  # in a specific region in one's account then updating the
+  # list contained in the mapping below here will allow a
+  # different AZ to be chosen.
+  AZRegions:
+    ap-northeast-1:
+      AZs: ["a", "b"]
+    ap-northeast-2:
+      AZs: ["a", "b"]
+    ap-south-1:
+      AZs: ["a", "b"]
+    ap-southeast-1:
+      AZs: ["a", "b"]
+    ap-southeast-2:
+      AZs: ["a", "b"]
+    ca-central-1:
+      AZs: ["a", "b"]
+    eu-central-1:
+      AZs: ["a", "b"]
+    eu-west-1:
+      AZs: ["a", "b"]
+    eu-west-2:
+      AZs: ["a", "b"]
+    sa-east-1:
+      AZs: ["a", "b"]
+    us-east-1:
+      AZs: ["a", "b"]
+    us-east-2:
+      AZs: ["a", "b"]
+    us-west-1:
+      AZs: ["a", "b"]
+    us-west-2:
+      AZs: ["a", "b"]
+
+Resources:
+  VPC:
+    Type: "AWS::EC2::VPC"
+    Properties:
+      EnableDnsSupport: "true"
+      EnableDnsHostnames: "true"
+      CidrBlock:
+        Fn::FindInMap:
+          - "SubnetConfig"
+          - "VPC"
+          - "CIDR"
+      Tags:
+        - Key: "Application"
+          Value:
+            Ref: "AWS::StackName"
+        - Key: "Name"
+          Value: !Join
+            - ""
+            - - !Ref "VPCName"
+              - "-"
+              - !Ref "AWS::Region"
+              - "-"
+              - !Ref "Environment"
+
+  PublicSubnet0:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId:
+        Ref: "VPC"
+      AvailabilityZone:
+        Fn::Sub:
+          - "${AWS::Region}${AZ}"
+          - AZ: !Select [0, !FindInMap ["AZRegions", !Ref "AWS::Region", "AZs"]]
+      CidrBlock:
+        Fn::FindInMap:
+          - "SubnetConfig"
+          - "Public0"
+          - "CIDR"
+      MapPublicIpOnLaunch: "true"
+      Tags:
+        - Key: "Application"
+          Value:
+            Ref: "AWS::StackName"
+        - Key: "Network"
+          Value: "Public"
+        - Key: "Name"
+          Value: !Join
+            - ""
+            - - !Ref "VPCName"
+              - "-public-"
+              - !Select [0, !FindInMap ["AZRegions", !Ref "AWS::Region", "AZs"]]
+              - "-"
+              - !Ref "Environment"
+  # PrivateSubnet0:
+  #   Type: "AWS::EC2::Subnet"
+  #   Properties:
+  #     VpcId:
+  #       Ref: "VPC"
+  #     AvailabilityZone:
+  #       Fn::Sub:
+  #         - "${AWS::Region}${AZ}"
+  #         - AZ: !Select [0, !FindInMap ["AZRegions", !Ref "AWS::Region", "AZs"]]
+  #     CidrBlock:
+  #       Fn::FindInMap:
+  #         - "SubnetConfig"
+  #         - "Private0"
+  #         - "CIDR"
+  #     Tags:
+  #       - Key: "Application"
+  #         Value:
+  #           Ref: "AWS::StackName"
+  #       - Key: "Network"
+  #         Value: "Private"
+  #       - Key: "Name"
+  #         Value: !Join
+  #           - ""
+  #           - - !Ref "VPCName"
+  #             - "-private-"
+  #             - !Select [0, !FindInMap ["AZRegions", !Ref "AWS::Region", "AZs"]]
+  #             - "-"
+  #             - !Ref "Environment"
+  # PrivateSubnet1:
+  #   Type: "AWS::EC2::Subnet"
+  #   Properties:
+  #     VpcId:
+  #       Ref: "VPC"
+  #     AvailabilityZone:
+  #       Fn::Sub:
+  #         - "${AWS::Region}${AZ}"
+  #         - AZ: !Select [1, !FindInMap ["AZRegions", !Ref "AWS::Region", "AZs"]]
+  #     CidrBlock:
+  #       Fn::FindInMap:
+  #         - "SubnetConfig"
+  #         - "Private1"
+  #         - "CIDR"
+  #     Tags:
+  #       - Key: "Application"
+  #         Value:
+  #           Ref: "AWS::StackName"
+  #       - Key: "Network"
+  #         Value: "Private"
+  #       - Key: "Name"
+  #         Value: !Join
+  #           - ""
+  #           - - !Ref "VPCName"
+  #             - "-private-"
+  #             - !Select [1, !FindInMap ["AZRegions", !Ref "AWS::Region", "AZs"]]
+  #             - "-"
+  #             - !Ref "Environment"
+  InternetGateway:
+    Type: "AWS::EC2::InternetGateway"
+    Properties:
+      Tags:
+        - Key: "Application"
+          Value:
+            Ref: "AWS::StackName"
+        - Key: "Name"
+          Value: !Join
+            - ""
+            - - !Ref "VPCName"
+              - "-IGW"
+              - "-"
+              - !Ref "Environment"
+
+  GatewayToInternet:
+    Type: "AWS::EC2::VPCGatewayAttachment"
+    Properties:
+      VpcId:
+        Ref: "VPC"
+      InternetGatewayId:
+        Ref: "InternetGateway"
+
+  PublicRouteTable:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId:
+        Ref: "VPC"
+      Tags:
+        - Key: "Application"
+          Value:
+            Ref: "AWS::StackName"
+        - Key: "Name"
+          Value: !Join
+            - ""
+            - - !Ref "VPCName"
+              - "-public-route-table"
+              - "-"
+              - !Ref "Environment"
+
+  PublicRoute:
+    Type: "AWS::EC2::Route"
+    DependsOn: "GatewayToInternet"
+    Properties:
+      RouteTableId:
+        Ref: "PublicRouteTable"
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId:
+        Ref: "InternetGateway"
+
+  PublicSubnetRouteTableAssociation0:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      SubnetId:
+        Ref: "PublicSubnet0"
+      RouteTableId:
+        Ref: "PublicRouteTable"
+
+  PublicNetworkAcl:
+    Type: "AWS::EC2::NetworkAcl"
+    Properties:
+      VpcId:
+        Ref: "VPC"
+      Tags:
+        - Key: "Application"
+          Value:
+            Ref: "AWS::StackName"
+        - Key: "Network"
+          Value: "Public"
+        - Key: "Name"
+          Value: !Join
+            - ""
+            - - !Ref "VPCName"
+              - "-public-nacl"
+              - "-"
+              - !Ref "Environment"
+
+  InboundHTTPPublicNetworkAclEntry:
+    Type: "AWS::EC2::NetworkAclEntry"
+    Properties:
+      NetworkAclId:
+        Ref: "PublicNetworkAcl"
+      RuleNumber: "100"
+      Protocol: "-1"
+      RuleAction: "allow"
+      Egress: "false"
+      CidrBlock: "0.0.0.0/0"
+      PortRange:
+        From: "0"
+        To: "65535"
+
+  OutboundPublicNetworkAclEntry:
+    Type: "AWS::EC2::NetworkAclEntry"
+    Properties:
+      NetworkAclId:
+        Ref: "PublicNetworkAcl"
+      RuleNumber: "100"
+      Protocol: "-1"
+      RuleAction: "allow"
+      Egress: "true"
+      CidrBlock: "0.0.0.0/0"
+      PortRange:
+        From: "0"
+        To: "65535"
+
+  PublicSubnetNetworkAclAssociation0:
+    Type: "AWS::EC2::SubnetNetworkAclAssociation"
+    Properties:
+      SubnetId:
+        Ref: "PublicSubnet0"
+      NetworkAclId:
+        Ref: "PublicNetworkAcl"
+
+  # ElasticIP0:
+  #   Type: "AWS::EC2::EIP"
+  #   Properties:
+  #     Domain: "vpc"
+  # NATGateway0:
+  #   Type: "AWS::EC2::NatGateway"
+  #   Properties:
+  #     AllocationId:
+  #       Fn::GetAtt:
+  #         - "ElasticIP0"
+  #         - "AllocationId"
+  #     SubnetId:
+  #       Ref: "PublicSubnet0"
+  #     Tags:
+  #       - Key: "Name"
+  #         Value: !Join
+  #           - ""
+  #           - - !Ref "VPCName"
+  #             - "-nat-gateway-0"
+  #             - "-"
+  #             - !Ref "Environment"
+  # PrivateRouteTable0:
+  #   Type: "AWS::EC2::RouteTable"
+  #   Properties:
+  #     VpcId:
+  #       Ref: "VPC"
+  #     Tags:
+  #       - Key: "Name"
+  #         Value: !Join
+  #           - ""
+  #           - - !Ref "VPCName"
+  #             - "-private-route-table-0"
+  #             - "-"
+  #             - !Ref "Environment"
+  # PrivateRouteTable1:
+  #   Type: "AWS::EC2::RouteTable"
+  #   Properties:
+  #     VpcId:
+  #       Ref: "VPC"
+  #     Tags:
+  #       - Key: "Name"
+  #         Value: !Join
+  #           - ""
+  #           - - !Ref "VPCName"
+  #             - "-private-route-table-1"
+  #             - "-"
+  #             - !Ref "Environment"
+  # PrivateRouteToInternet0:
+  #   Type: "AWS::EC2::Route"
+  #   Properties:
+  #     RouteTableId:
+  #       Ref: "PrivateRouteTable0"
+  #     DestinationCidrBlock: "0.0.0.0/0"
+  #     NatGatewayId:
+  #       Ref: "NATGateway0"
+  # PrivateRouteToInternet1:
+  #   Type: "AWS::EC2::Route"
+  #   Properties:
+  #     RouteTableId:
+  #       Ref: "PrivateRouteTable1"
+  #     DestinationCidrBlock: "0.0.0.0/0"
+  #     NatGatewayId:
+  #       Ref: "NATGateway0"
+  # PrivateSubnetRouteTableAssociation0:
+  #   Type: "AWS::EC2::SubnetRouteTableAssociation"
+  #   Properties:
+  #     SubnetId:
+  #       Ref: "PrivateSubnet0"
+  #     RouteTableId:
+  #       Ref: "PrivateRouteTable0"
+  # PrivateSubnetRouteTableAssociation1:
+  #   Type: "AWS::EC2::SubnetRouteTableAssociation"
+  #   Properties:
+  #     SubnetId:
+  #       Ref: "PrivateSubnet1"
+  #     RouteTableId:
+  #       Ref: "PrivateRouteTable1"
+
+  EC2SecurityGroupSSH:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref "VPC"
+      GroupDescription: SSH access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: "22"
+          ToPort: "22"
+          CidrIp: !Ref "SSHLocation"
+      Tags:
+        - Key: "Name"
+          Value: !Join
+            - ""
+            - - !Ref "VPCName"
+              - "-"
+              - "ssh"
+              - "-"
+              - !Ref "Environment"
+
+Outputs:
+  VPCId:
+    Description: "VPCId of VPC"
+    Value:
+      Ref: "VPC"
+    Export:
+      Name: !Sub "${AWS::Region}-${AWS::StackName}-VPC"
+
+  DefaultSecurityGroup:
+    Description: "DefaultSecurityGroup Id"
+    Value: !GetAtt VPC.DefaultSecurityGroup
+    Export:
+      Name: !Sub "${AWS::Region}-${AWS::StackName}-DefaultSecurityGroup"
+
+  EC2SecurityGroupSSH:
+    Description: "EC2SecurityGroupSSH Id"
+    Value:
+      Ref: "EC2SecurityGroupSSH"
+    Export:
+      Name: !Sub "${AWS::Region}-${AWS::StackName}-EC2SecurityGroupSSH"
+
+  PublicSubnet0:
+    Description: "SubnetId of public subnet 0"
+    Value:
+      Ref: "PublicSubnet0"
+    Export:
+      Name: !Sub "${AWS::Region}-${AWS::StackName}-PublicSubnet0"
+  # PrivateSubnet0:
+  #   Description: "SubnetId of private subnet 0"
+  #   Value:
+  #     Ref: "PrivateSubnet0"
+  #   Export:
+  #     Name: !Sub "${AWS::Region}-${AWS::StackName}-PrivateSubnet0"
