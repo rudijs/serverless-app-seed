@@ -11,6 +11,7 @@ import HomePage from './components/HomePage'
 import DashboardPage from './components/DashboardPage'
 import ProfilePage from './components/ProfilePage'
 import SignInPage from './components/SignInPage'
+import UsersPage from './components/Users'
 
 const trackingId = config.googleAnalytics.trackingId
 
@@ -49,6 +50,7 @@ const App = () => {
           <Route path="/signin" component={SignInPage} />
           <PrivateRoute path="/dashboard" component={DashboardPage} />
           <PrivateRoute path="/profile" component={ProfilePage} />
+          <PrivateRoute path="/users" component={UsersPage} />
         </Switch>
       </Container>
     </Router>

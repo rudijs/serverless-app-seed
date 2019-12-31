@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^4.7.1",
     "@material-ui/icons": "^4.5.1",
+    "@xstate/react": "^0.8.1",
     "aws-amplify": "^1.2.4",
     "bootstrap": "^4.4.0",
     "clsx": "^1.0.4",
@@ -20,6 +21,7 @@
     "react-ga": "^2.7.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
+    "xstate": "^4.7.5",
     "yup": "^0.27.0"
   },
   "scripts": {
