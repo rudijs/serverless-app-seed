@@ -17,14 +17,7 @@ const fetchMachine = Machine(
       pending: {
         invoke: {
           src: 'fetchData',
-          onDone: [
-            {
-              target: 'successful.withData',
-              actions: ['setResults'],
-              cond: 'hadData',
-            },
-            {target: 'successful.withoutData', actions: ['setResults']},
-          ],
+          onDone: {target: 'successful', actions: ['setResults']},
           onError: {target: 'failed', actions: ['setMessage']},
         },
         // entry: ['fetchData'],
@@ -35,8 +28,17 @@ const fetchMachine = Machine(
       },
       failed: {on: {FETCH: 'pending'}},
       successful: {
+        initial: 'unknown',
         on: {FETCH: 'pending'},
         states: {
+          unknown: {
+            on: {
+              '': [
+                {target: 'withData', cond: 'hasData'},
+                {target: 'withoutData'},
+              ],
+            },
+          },
           withData: {},
           withoutData: {},
         },
@@ -55,9 +57,7 @@ const fetchMachine = Machine(
       })),
     },
     guards: {
-      hadData: (ctx, event) => {
-        return event.data && event.data.length > 0
-      },
+      hasData: (ctx, event) => !!ctx.results && ctx.results.length > 0,
     },
   },
 )
