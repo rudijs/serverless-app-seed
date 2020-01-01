@@ -3,10 +3,7 @@ import {inject, observer} from 'mobx-react'
 import {API} from 'aws-amplify'
 
 import {makeStyles} from '@material-ui/core/styles'
-import Box from '@material-ui/core/Box'
-import Paper from '@material-ui/core/Paper'
-import {Typography} from '@material-ui/core'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import {Box, Paper, Typography, CircularProgress} from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
   paper: {
