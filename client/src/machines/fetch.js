@@ -15,24 +15,49 @@ const fetchMachine = Machine(
         },
       },
       pending: {
-        entry: ['fetchData'],
-        on: {
-          RESOLVE: {target: 'successful', actions: ['setResults']},
-          REJECT: {target: 'failed', actions: ['setMessage']},
+        invoke: {
+          src: 'fetchData',
+          onDone: [
+            {
+              target: 'successful.withData',
+              actions: ['setResults'],
+              cond: 'hadData',
+            },
+            {target: 'successful.withoutData', actions: ['setResults']},
+          ],
+          onError: {target: 'failed', actions: ['setMessage']},
         },
+        // entry: ['fetchData'],
+        // on: {
+        //   RESOLVE: {target: 'successful', actions: ['setResults']},
+        //   REJECT: {target: 'failed', actions: ['setMessage']},
+        // },
       },
       failed: {on: {FETCH: 'pending'}},
-      successful: {on: {FETCH: 'pending'}},
+      successful: {
+        on: {FETCH: 'pending'},
+        states: {
+          withData: {},
+          withoutData: {},
+        },
+      },
     },
   },
   {
     actions: {
       setResults: assign((ctx, event) => ({
-        results: event.results,
+        results: event.data,
+        // results: event.results,
       })),
       setMessage: assign((ctx, event) => ({
-        message: event.message,
+        message: event.data,
+        // message: event.message,
       })),
+    },
+    guards: {
+      hadData: (ctx, event) => {
+        return event.data && event.data.length > 0
+      },
     },
   },
 )
