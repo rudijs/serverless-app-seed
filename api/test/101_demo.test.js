@@ -30,7 +30,7 @@ describe("Smoke Tests", function() {
     try {
       const res = await axios.get(signedRequest.url, { params: {}, headers })
 
-      // console.log(res)
+      console.log(res)
       expect(res.status).to.equal(200)
       expect(res.data.message).to.match(/Your function executed successfully/)
     } catch (e) {

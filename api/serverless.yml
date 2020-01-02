@@ -24,6 +24,12 @@ provider:
   environment:
     REGION: ${self:provider.region}
     USER_POOL_ID: ${self:custom.cognito.userPoolId}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - cognito-idp:AdminListGroupsForUser
+      # Resource: "arn:aws:cognito-idp:${self:provider.region}:#{AWS::AccountId}:userpool/${self:custom.cognito.userPoolId}"
+      Resource: "arn:aws:cognito-idp:${self:provider.region}:#{AWS::AccountId}:userpool/*"
 
 functions:
   hello:

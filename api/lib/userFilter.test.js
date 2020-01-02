@@ -1,5 +1,5 @@
 const userFilter = require("./userFilter").userFilter
-const fixtureUsers = require("./fixtures/users").users
+const fixtureUsers = require("./fixtures/listUsers").users
 const expect = require("chai").expect
 
 describe("#userFilter", () => {

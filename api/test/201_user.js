@@ -6,7 +6,7 @@ const sigV4Client = require("../lib/sigV4Client").sigV4Client
 const axios = require("axios")
 const userFilter = require("../lib/userFilter").userFilter
 
-describe("/User", function() {
+describe.skip("/User", function() {
   let usersConfig
 
   const client = sigV4Client.newClient({

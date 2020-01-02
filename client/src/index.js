@@ -16,7 +16,7 @@ import './index.css'
 import Amplify, {Auth} from 'aws-amplify'
 import config from './config'
 
-// Amplify.Logger.LOG_LEVEL = 'DEBUG'
+Amplify.Logger.LOG_LEVEL = 'DEBUG'
 // const logger = new Logger('foo', 'VERBOSE')
 
 // logger.info('info bar')

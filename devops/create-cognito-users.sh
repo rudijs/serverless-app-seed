@@ -35,7 +35,7 @@ aws cognito-idp admin-confirm-sign-up \
 --username admin@example.com
 
 echo "==> Create Admin group"
-aws cognito-idp create-group --user-pool-id $AWS_APP_COGNITO_USER_POOL_ID --group-name admin
+aws cognito-idp create-group --user-pool-id $AWS_APP_COGNITO_USER_POOL_ID --group-name admin --description 'Admin Group'
 
 echo "==> Add to admin@example.com Admin role"
 aws cognito-idp admin-add-user-to-group --user-pool-id $AWS_APP_COGNITO_USER_POOL_ID --group-name admin --username admin@example.com
@@ -54,7 +54,7 @@ aws cognito-idp admin-confirm-sign-up \
 --username user@example.com
 
 echo "==> Create User group"
-aws cognito-idp create-group --user-pool-id $AWS_APP_COGNITO_USER_POOL_ID --group-name user 
+aws cognito-idp create-group --user-pool-id $AWS_APP_COGNITO_USER_POOL_ID --group-name user --description 'User Group'
 
 echo "==> Add user@example.com to User role"
 aws cognito-idp admin-add-user-to-group --user-pool-id $AWS_APP_COGNITO_USER_POOL_ID --group-name user --username user@example.com
