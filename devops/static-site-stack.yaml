@@ -52,6 +52,9 @@ Resources:
       WebsiteConfiguration:
         ErrorDocument: index.html
         IndexDocument: index.html
+      Tags:
+        - Key: "Environment"
+          Value: !Ref "Environment"
 
   StaticSiteBucketBucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -116,6 +119,9 @@ Resources:
           Bucket: !GetAtt [CloudFrontLogsBucket, DomainName]
           Prefix: cloudfront-logs/
           IncludeCookies: false
+      Tags:
+        - Key: "Environment"
+          Value: !Ref "Environment"
 
   StaticSiteDomainName:
     Type: AWS::Route53::RecordSet
@@ -138,6 +144,9 @@ Resources:
         - IsProduction
         - !Join [".", [!Ref SubDomain, !Ref DomainName, "analytics"]]
         - !Join ["-", [!Ref Environment, !Join [".", [!Ref SubDomain, !Ref DomainName, "analytics"]]]]
+      Tags:
+        - Key: "Environment"
+          Value: !Ref "Environment"
 
 Outputs:
   StaticSiteBucketName:
